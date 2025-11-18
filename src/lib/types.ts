@@ -35,3 +35,14 @@ export type Order = {
   status: OrderStatus;
   createdAt: Date;
 };
+
+export type Waiter = {
+  id: string;
+  name: string;
+  avatarUrl: string;
+};
+
+export type Table = {
+  id: number;
+  waiterId?: string;
+};

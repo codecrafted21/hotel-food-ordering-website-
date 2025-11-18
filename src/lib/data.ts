@@ -1,4 +1,4 @@
-import type { Category, Dish, Order } from './types';
+import type { Category, Dish, Order, Table, Waiter } from './types';
 
 export const CATEGORIES: Category[] = [
   { id: 'starters', name: 'Starters' },
@@ -151,3 +151,15 @@ export const MOCK_ORDERS: Order[] = [
         createdAt: new Date(Date.now() - 1 * 60 * 1000) // 1 minute ago
     }
 ]
+
+export const WAITERS: Waiter[] = [
+  { id: 'waiter-1', name: 'Ravi', avatarUrl: 'https://i.pravatar.cc/150?u=ravi' },
+  { id: 'waiter-2', name: 'Priya', avatarUrl: 'https://i.pravatar.cc/150?u=priya' },
+  { id: 'waiter-3', name: 'Sanjay', avatarUrl: 'https://i.pravatar.cc/150?u=sanjay' },
+  { id: 'waiter-4', name: 'Anjali', avatarUrl: 'https://i.pravatar.cc/150?u=anjali' },
+];
+
+export const TABLES: Table[] = Array.from({ length: 16 }, (_, i) => ({
+  id: i + 1,
+  waiterId: WAITERS[i % WAITERS.length].id,
+}));
