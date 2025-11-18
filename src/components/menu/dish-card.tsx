@@ -52,7 +52,7 @@ export function DishCard({ dish }: DishCardProps) {
         </CardDescription>
       </CardContent>
       <CardFooter className="p-4 flex justify-between items-center">
-        <p className="text-lg font-bold text-primary">${dish.price.toFixed(2)}</p>
+        <p className="text-lg font-bold text-primary">₹{dish.price.toFixed(2)}</p>
         <Button onClick={handleAddToCart} size="sm" aria-label={`Add ${dish.name} to cart`}>
           <Plus className="h-4 w-4 mr-2" />
           Add

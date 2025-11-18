@@ -42,14 +42,14 @@ export function OrderCard({ order, onStatusUpdate }: OrderCardProps) {
           {order.items.map(item => (
             <li key={item.id} className="flex justify-between">
               <span>{item.quantity} x {item.dish.name}</span>
-              <span>${(item.dish.price * item.quantity).toFixed(2)}</span>
+              <span>₹{(item.dish.price * item.quantity).toFixed(2)}</span>
             </li>
           ))}
         </ul>
         <Separator className="my-4" />
         <div className="flex justify-between font-bold">
           <span>Total</span>
-          <span>${order.total.toFixed(2)}</span>
+          <span>₹{order.total.toFixed(2)}</span>
         </div>
       </CardContent>
       <CardFooter>

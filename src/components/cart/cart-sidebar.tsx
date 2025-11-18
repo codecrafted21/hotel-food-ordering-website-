@@ -67,7 +67,7 @@ export function CartSidebar() {
               <AiSuggestions />
               <div className="flex justify-between font-semibold">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <Link href="/checkout" className="block">
                 <Button 

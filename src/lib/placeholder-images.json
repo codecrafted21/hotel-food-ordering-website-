@@ -2,81 +2,81 @@
   "placeholderImages": [
     {
       "id": "hero-1",
-      "description": "A lavish spread of various dishes on a dark table.",
-      "imageUrl": "https://images.unsplash.com/photo-1669472546359-418a98630699?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmb29kJTIwcGxhdHRlcnxlbnwwfHx8fDE3NjM0NDkyOTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "food platter"
+      "description": "A lavish spread of various Indian dishes on a dark table.",
+      "imageUrl": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxpbmRpYW4lMjBmb29kfGVufDB8fHx8MTc2NTQyMDI5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian food"
     },
     {
       "id": "dish-starter-1",
-      "description": "Crispy spring rolls with a dipping sauce.",
-      "imageUrl": "https://images.unsplash.com/photo-1695712641569-05eee7b37b6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzcHJpbmclMjByb2xsc3xlbnwwfHx8fDE3NjM0ODc2MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "spring rolls"
+      "description": "Grilled Paneer Tikka skewers.",
+      "imageUrl": "https://images.unsplash.com/photo-1599529941123-2592502685be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYW5lZXIlMjB0aWtrYXxlbnwwfHx8fDE3NjU0MjA0NTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "paneer tikka"
     },
     {
       "id": "dish-starter-2",
-      "description": "Spicy chicken wings.",
-      "imageUrl": "https://images.unsplash.com/photo-1618416682145-2fe1aaa6bd40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjaGlja2VuJTIwd2luZ3N8ZW58MHx8fHwxNzYzMzgwNjcxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "chicken wings"
+      "description": "Crispy fried Samosas on a plate.",
+      "imageUrl": "https://images.unsplash.com/photo-1625220194771-7ebdea0d3db7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzYW1vc2F8ZW58MHx8fHwxNzY1NDIwNDg5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "samosa"
     },
     {
       "id": "dish-starter-3",
-      "description": "Garlic bread with herbs.",
-      "imageUrl": "https://images.unsplash.com/photo-1556008531-57e6eefc7be4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Z2FybGljJTIwYnJlYWR8ZW58MHx8fHwxNzYzNDM3OTEyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "garlic bread"
+      "description": "Golden brown Aloo Tikki patties.",
+      "imageUrl": "https://images.unsplash.com/photo-1642806622835-953b05f63b93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhbG9vJTIwdGlra2l8ZW58MHx8fHwxNzY1NDIwNTM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "aloo tikki"
     },
     {
       "id": "dish-main-1",
-      "description": "Creamy butter chicken curry.",
-      "imageUrl": "https://images.unsplash.com/photo-1584949602334-4e99f98286a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8YnV0dGVyJTIwY2hpY2tlbnxlbnwwfHx8fDE3NjM0ODc2MTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "description": "Creamy butter chicken curry in a bowl.",
+      "imageUrl": "https://images.unsplash.com/photo-1588166524941-3bf6a85e4e4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxidXR0ZXIlMjBjaGlja2VufGVufDB8fHx8MTc2NTQyMDU3Mnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "butter chicken"
     },
     {
       "id": "dish-main-2",
-      "description": "Classic Italian pizza with pepperoni.",
-      "imageUrl": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwaXp6YXxlbnwwfHx8fDE3NjM0NjYxNDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "pizza"
+      "description": "A bowl of Palak Paneer with spinach and cottage cheese.",
+      "imageUrl": "https://images.unsplash.com/photo-1695424683069-b7b282c92b87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYWxhayUyMHBhbmVlcnxlbnwwfHx8fDE3NjU0MjA2MDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "palak paneer"
     },
     {
       "id": "dish-main-3",
-      "description": "A hearty beef burger with fries.",
-      "imageUrl": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxidXJnZXIlMjBmcmllc3xlbnwwfHx8fDE3NjMzOTQwMDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "burger fries"
+      "description": "A rich and creamy bowl of Dal Makhani.",
+      "imageUrl": "https://images.unsplash.com/photo-1695424683069-b7b282c92b87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxEYWwlMjBNYWtoYW5pfGVufDB8fHx8MTc2NTQyMDYzNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dal makhani"
     },
     {
       "id": "dish-biryani-1",
-      "description": "Aromatic chicken biryani.",
+      "description": "Aromatic Hyderabadi Chicken Biryani.",
       "imageUrl": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjaGlja2VuJTIwYmlyeWFuaXxlbnwwfHx8fDE3NjM0ODQ4NjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "chicken biryani"
     },
     {
       "id": "dish-biryani-2",
-      "description": "Spicy mutton biryani.",
-      "imageUrl": "https://images.unsplash.com/photo-1691171047323-37acec85fc84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtdXR0b24lMjBiaXJ5YW5pfGVufDB8fHx8MTc2MzQ4NDg2NHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "mutton biryani"
+      "description": "Flavorful Vegetable Biryani in a pot.",
+      "imageUrl": "https://images.unsplash.com/photo-1589301760014-d929f397918b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx2ZWdldGFibGUlMjBiaXJ5YW5pfGVufDB8fHx8MTc2NTQyMDcwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "vegetable biryani"
     },
     {
       "id": "dish-drink-1",
-      "description": "Refreshing mojito cocktail.",
-      "imageUrl": "https://images.unsplash.com/photo-1724155331840-263a0454d8bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtb2ppdG8lMjBjb2NrdGFpbHxlbnwwfHx8fDE3NjM0NDk0OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "mojito cocktail"
+      "description": "A glass of hot Masala Chai.",
+      "imageUrl": "https://images.unsplash.com/photo-1597318181409-cf62d9a7509c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYXNhbGElMjBjaGFpfGVufDB8fHx8MTc2NTQyMDc0N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "masala chai"
     },
     {
       "id": "dish-drink-2",
-      "description": "A glass of fresh orange juice.",
-      "imageUrl": "https://images.unsplash.com/photo-1618724980108-a4d3856fd8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxvcmFuZ2UlMjBqdWljZXxlbnwwfHx8fDE3NjM0MjMwNjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "orange juice"
+      "description": "A tall glass of creamy Mango Lassi.",
+      "imageUrl": "https://images.unsplash.com/photo-1626803775151-6c579c28923a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYW5nbyUyMGxhc3NpfGVufDB8fHx8MTc2NTQyMDc4MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mango lassi"
     },
     {
       "id": "dish-dessert-1",
-      "description": "Rich chocolate lava cake.",
-      "imageUrl": "https://images.unsplash.com/photo-1586985289906-406988974504?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaG9jb2xhdGUlMjBjYWtlfGVufDB8fHx8MTc2MzQ1MjAzNnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "chocolate cake"
+      "description": "Sweet Gulab Jamun balls in a bowl.",
+      "imageUrl": "https://images.unsplash.com/photo-1670984577883-925eb396a84c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxndWxhYiUyMGphbXVufGVufDB8fHx8MTc2NTQyMDgwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gulab jamun"
     },
     {
       "id": "dish-dessert-2",
-      "description": "A scoop of vanilla ice cream.",
-      "imageUrl": "https://images.unsplash.com/photo-1501443762994-82bd5dace89a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxpY2UlMjBjcmVhbXxlbnwwfHx8fDE3NjM0NDE1NzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "ice cream"
+      "description": "Creamy Rasmalai dessert.",
+      "imageUrl": "https://images.unsplash.com/photo-1603753892186-63f45c82c16f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyYXNtYWxhaXxlbnwwfHx8fDE3NjU0MjA4NDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "rasmalai"
     },
     {
       "id": "about-us",

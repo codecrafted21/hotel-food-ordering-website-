@@ -58,9 +58,9 @@ function CheckoutLogic() {
                 <div key={item.id} className="flex justify-between items-center">
                   <div>
                     <p className="font-semibold">{item.quantity} x {item.dish.name}</p>
-                    <p className="text-sm text-muted-foreground">${item.dish.price.toFixed(2)} each</p>
+                    <p className="text-sm text-muted-foreground">₹{item.dish.price.toFixed(2)} each</p>
                   </div>
-                  <p className="font-semibold">${(item.dish.price * item.quantity).toFixed(2)}</p>
+                  <p className="font-semibold">₹{(item.dish.price * item.quantity).toFixed(2)}</p>
                 </div>
               ))}
             </div>
@@ -89,16 +89,16 @@ function CheckoutLogic() {
             <Separator />
             <div className="flex justify-between">
               <span className="text-muted-foreground">Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>₹{subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Taxes (10%)</span>
-              <span>${taxes.toFixed(2)}</span>
+              <span>₹{taxes.toFixed(2)}</span>
             </div>
             <Separator />
             <div className="flex justify-between font-bold text-lg">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>₹{total.toFixed(2)}</span>
             </div>
           </CardContent>
           <CardFooter>

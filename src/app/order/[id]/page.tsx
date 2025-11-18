@@ -44,11 +44,11 @@ function OrderTrackingPageContent({ params }: { params: { id: string } }) {
               <div className="mt-6 flex justify-center gap-4">
                 <div className="text-center p-4 rounded-lg bg-card border w-40">
                   <p className="font-bold">{DISHES.find(d => d.id === 'dish-11')?.name}</p>
-                  <p className="text-sm text-primary">${DISHES.find(d => d.id === 'dish-11')?.price.toFixed(2)}</p>
+                  <p className="text-sm text-primary">₹{DISHES.find(d => d.id === 'dish-11')?.price.toFixed(2)}</p>
                 </div>
                  <div className="text-center p-4 rounded-lg bg-card border w-40">
                   <p className="font-bold">{DISHES.find(d => d.id === 'dish-12')?.name}</p>
-                  <p className="text-sm text-primary">${DISHES.find(d => d.id === 'dish-12')?.price.toFixed(2)}</p>
+                  <p className="text-sm text-primary">₹{DISHES.find(d => d.id === 'dish-12')?.price.toFixed(2)}</p>
                 </div>
               </div>
             </div>

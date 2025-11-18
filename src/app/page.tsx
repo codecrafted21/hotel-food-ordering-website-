@@ -32,7 +32,7 @@ export default function Home({
         <div className="absolute inset-0 bg-black/60 flex flex-col justify-center items-center text-center">
           <div className="max-w-4xl mx-auto px-4">
             <h1 className="text-4xl md:text-6xl font-headline font-bold text-white tracking-tight leading-tight">
-              A Symphony of Flavors at Your Fingertips
+              A Symphony of Indian Flavors
             </h1>
             <p className="mt-4 text-lg md:text-xl text-primary-foreground/90">
               Explore our curated menu and order directly from your table.

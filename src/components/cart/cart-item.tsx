@@ -29,10 +29,10 @@ export function CartItem({ item }: CartItemProps) {
       </div>
       <div className="flex-1">
         <h4 className="font-semibold text-sm">{item.dish.name}</h4>
-        <p className="text-muted-foreground text-sm">${item.dish.price.toFixed(2)}</p>
+        <p className="text-muted-foreground text-sm">₹{item.dish.price.toFixed(2)}</p>
       </div>
       <div className="flex flex-col items-end gap-1">
-         <p className="font-semibold text-sm">${(item.dish.price * item.quantity).toFixed(2)}</p>
+         <p className="font-semibold text-sm">₹{(item.dish.price * item.quantity).toFixed(2)}</p>
          <UpdateQuantityButtons cartItemId={item.id} quantity={item.quantity} />
       </div>
     </div>
