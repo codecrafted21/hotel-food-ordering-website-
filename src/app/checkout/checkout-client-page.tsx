@@ -15,6 +15,7 @@ function CheckoutLogic() {
   const { state, dispatch } = useCart();
   const { toast } = useToast();
   const [tableNumber, setTableNumber] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedTable = localStorage.getItem('tableNumber');
@@ -23,6 +24,7 @@ function CheckoutLogic() {
     } else {
        router.push('/scan');
     }
+    setIsLoading(false);
   }, [router]);
 
 
@@ -38,6 +40,7 @@ function CheckoutLogic() {
         title: 'Error',
         description: 'Table number is missing. Please scan the QR code again.',
       });
+      router.push('/scan');
       return;
     }
     // In a real app, this would trigger a server action to save the order
@@ -54,14 +57,14 @@ function CheckoutLogic() {
     router.push(`/order/${orderId}?table=${tableNumber}`);
   };
   
-    if (!tableNumber) {
+    if (isLoading || !tableNumber) {
     return (
       <div className="flex flex-col items-center justify-center text-center h-64">
         <Alert variant="destructive" className="max-w-sm">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Missing Table Number</AlertTitle>
           <AlertDescription>
-            Redirecting you to scan your table's QR code...
+            We couldn't find your table number. Redirecting you to scan your table's QR code...
           </AlertDescription>
         </Alert>
       </div>
@@ -77,17 +80,21 @@ function CheckoutLogic() {
             <CardTitle className="font-headline">Order Summary</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {items.map(item => (
-                <div key={item.id} className="flex justify-between items-center">
-                  <div>
-                    <p className="font-semibold">{item.quantity} x {item.dish.name}</p>
-                    <p className="text-sm text-muted-foreground">₹{item.dish.price.toFixed(2)} each</p>
+            {items.length > 0 ? (
+              <div className="space-y-4">
+                {items.map(item => (
+                  <div key={item.id} className="flex justify-between items-center">
+                    <div>
+                      <p className="font-semibold">{item.quantity} x {item.dish.name}</p>
+                      <p className="text-sm text-muted-foreground">₹{item.dish.price.toFixed(2)} each</p>
+                    </div>
+                    <p className="font-semibold">₹{(item.dish.price * item.quantity).toFixed(2)}</p>
                   </div>
-                  <p className="font-semibold">₹{(item.dish.price * item.quantity).toFixed(2)}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground">Your cart is empty.</p>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -17,23 +17,25 @@ function MenuContent() {
   const table = searchParams.get('table');
 
   useEffect(() => {
-    if (table) {
-      localStorage.setItem('tableNumber', table);
-    } else {
-      const storedTable = localStorage.getItem('tableNumber');
-      if (storedTable) {
-        // Re-add table to URL if it's in storage but not in params
-        router.replace(`/?table=${storedTable}&category=${currentCategory}#menu`);
-      } else {
-        // Redirect to scan if no table in params or storage
-        router.replace('/scan');
-      }
+    const tableFromUrl = searchParams.get('table');
+    if (tableFromUrl) {
+      localStorage.setItem('tableNumber', tableFromUrl);
+      // Optional: clean the URL after storing the table number
+      router.replace(`/?category=${currentCategory}#menu`, { scroll: false });
+    } else if (!localStorage.getItem('tableNumber')) {
+      router.replace('/scan');
     }
-  }, [table, router, currentCategory]);
-  
-  // Don't render anything until the effect has run and determined the correct path
-  if (!table && typeof window !== 'undefined' && !localStorage.getItem('tableNumber')) {
-    return null; // Or a loading spinner
+  }, [searchParams, router, currentCategory]);
+
+  const isReady = typeof window !== 'undefined' && (searchParams.get('table') || localStorage.getItem('tableNumber'));
+
+  if (!isReady) {
+    // You can return a loader here
+    return (
+        <div className="flex items-center justify-center h-screen">
+          <p>Loading your menu...</p>
+        </div>
+    );
   }
 
   const filteredDishes = DISHES.filter(
