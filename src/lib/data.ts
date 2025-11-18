@@ -121,8 +121,8 @@ export const MOCK_ORDERS: Order[] = [
         id: 'ORD-1',
         tableNumber: 5,
         items: [
-            { id: 'cart-1', dish: DISHES[0], quantity: 2 },
-            { id: 'cart-2', dish: DISHES[3], quantity: 1 },
+            { id: 'cart-1', dish: DISHES[0], quantity: 2 }, // Paneer Tikka
+            { id: 'cart-2', dish: DISHES[3], quantity: 1 }, // Butter Chicken
         ],
         total: (DISHES[0].price * 2) + DISHES[3].price,
         status: 'Preparing',
@@ -132,11 +132,11 @@ export const MOCK_ORDERS: Order[] = [
         id: 'ORD-2',
         tableNumber: 12,
         items: [
-            { id: 'cart-3', dish: DISHES[6], quantity: 1 },
-            { id: 'cart-4', dish: DISHES[7], quantity: 1 },
-            { id: 'cart-5', dish: DISHES[10], quantity: 2 },
+            { id: 'cart-3', dish: DISHES[6], quantity: 1 }, // Hyderabadi Chicken Biryani
+            { id: 'cart-4', dish: DISHES[7], quantity: 1 }, // Vegetable Biryani
+            { id: 'cart-5', dish: DISHES[9], quantity: 2 }, // Rasmalai
         ],
-        total: DISHES[6].price + DISHES[7].price + (DISHES[10].price * 2),
+        total: DISHES[6].price + DISHES[7].price + (DISHES[9].price * 2),
         status: 'Cooking',
         createdAt: new Date(Date.now() - 2 * 60 * 1000) // 2 minutes ago
     },
@@ -144,7 +144,7 @@ export const MOCK_ORDERS: Order[] = [
         id: 'ORD-3',
         tableNumber: 8,
         items: [
-            { id: 'cart-6', dish: DISHES[4], quantity: 1 },
+            { id: 'cart-6', dish: DISHES[4], quantity: 1 }, // Palak Paneer
         ],
         total: DISHES[4].price,
         status: 'Preparing',
