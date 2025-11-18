@@ -1,0 +1,121 @@
+'use client';
+
+import { Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCart } from '@/components/cart/cart-provider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
+function CheckoutLogic() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { state, dispatch } = useCart();
+  const { toast } = useToast();
+  const tableNumber = searchParams.get('table');
+
+  const { items } = state;
+  const subtotal = items.reduce((sum, item) => sum + item.dish.price * item.quantity, 0);
+  const taxes = subtotal * 0.1;
+  const total = subtotal + taxes;
+
+  const handlePlaceOrder = () => {
+    if (!tableNumber) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Table number is missing. Please scan the QR code again.',
+      });
+      return;
+    }
+    // In a real app, this would trigger a server action to save the order
+    const orderId = `TB-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    console.log('Placing order:', { orderId, tableNumber, items, total });
+
+    dispatch({ type: 'CLEAR_CART' });
+
+    toast({
+      title: 'Order Placed!',
+      description: 'Your order has been sent to the kitchen.',
+    });
+
+    router.push(`/order/${orderId}?table=${tableNumber}`);
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-headline">Order Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {items.map(item => (
+                <div key={item.id} className="flex justify-between items-center">
+                  <div>
+                    <p className="font-semibold">{item.quantity} x {item.dish.name}</p>
+                    <p className="text-sm text-muted-foreground">${item.dish.price.toFixed(2)} each</p>
+                  </div>
+                  <p className="font-semibold">${(item.dish.price * item.quantity).toFixed(2)}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div>
+        <Card className="sticky top-24">
+          <CardHeader>
+            <CardTitle className="font-headline">Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!tableNumber && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Missing Table Number</AlertTitle>
+                <AlertDescription>
+                  Please scan your table's QR code.
+                </AlertDescription>
+              </Alert>
+            )}
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Table</span>
+              <span className="font-bold text-2xl text-primary">{tableNumber || '?'}</span>
+            </div>
+            <Separator />
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Subtotal</span>
+              <span>${subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Taxes (10%)</span>
+              <span>${taxes.toFixed(2)}</span>
+            </div>
+            <Separator />
+            <div className="flex justify-between font-bold text-lg">
+              <span>Total</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button className="w-full font-bold" size="lg" onClick={handlePlaceOrder} disabled={!tableNumber || items.length === 0}>
+              Place Order
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+export default function CheckoutClientPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutLogic />
+    </Suspense>
+  );
+}
