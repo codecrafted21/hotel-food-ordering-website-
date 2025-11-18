@@ -2,12 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { CookingPot, QrCode, Home } from 'lucide-react';
+import { CookingPot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/admin', label: 'Live Orders', icon: CookingPot },
-  { href: '/admin/tables', label: 'Tables', icon: QrCode },
 ];
 
 export function AdminSidebar() {

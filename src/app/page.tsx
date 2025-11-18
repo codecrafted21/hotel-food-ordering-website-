@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { DISHES, CATEGORIES } from '@/lib/data';
@@ -10,33 +10,15 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 function MenuContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
   const currentCategory = searchParams.get('category') || CATEGORIES[0].id;
-  const table = searchParams.get('table');
-
+  
   useEffect(() => {
-    const tableFromUrl = searchParams.get('table');
-    if (tableFromUrl) {
-      localStorage.setItem('tableNumber', tableFromUrl);
-      // Optional: clean the URL after storing the table number
-      router.replace(`/?category=${currentCategory}#menu`, { scroll: false });
-    } else if (!localStorage.getItem('tableNumber')) {
-      router.replace('/scan');
+      // Set a default table number if one isn't present
+    if (!localStorage.getItem('tableNumber')) {
+      localStorage.setItem('tableNumber', '1');
     }
-  }, [searchParams, router, currentCategory]);
-
-  const isReady = typeof window !== 'undefined' && (searchParams.get('table') || localStorage.getItem('tableNumber'));
-
-  if (!isReady) {
-    // You can return a loader here
-    return (
-        <div className="flex items-center justify-center h-screen">
-          <p>Loading your menu...</p>
-        </div>
-    );
-  }
+  }, []);
 
   const filteredDishes = DISHES.filter(
     (dish) => dish.categoryId === currentCategory

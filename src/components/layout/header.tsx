@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ShoppingCart, User, QrCode } from 'lucide-react';
+import { ShoppingCart, User } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/components/cart/cart-provider';
@@ -30,10 +30,6 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (pathname === '/scan') {
-    return null;
-  }
-
   return (
     <header
       className={cn(
@@ -56,12 +52,6 @@ export default function Header() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <Link href="/scan">
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <QrCode className="h-5 w-5" />
-                <span className="sr-only">Scan Table QR</span>
-              </Button>
-            </Link>
             <Button
               variant="ghost"
               size="icon"

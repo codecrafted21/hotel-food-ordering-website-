@@ -15,17 +15,17 @@ function CheckoutLogic() {
   const { state, dispatch } = useCart();
   const { toast } = useToast();
   const [tableNumber, setTableNumber] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedTable = localStorage.getItem('tableNumber');
     if (storedTable) {
       setTableNumber(storedTable);
     } else {
-       router.push('/scan');
+      // If no table number, default to 1
+      localStorage.setItem('tableNumber', '1');
+      setTableNumber('1');
     }
-    setIsLoading(false);
-  }, [router]);
+  }, []);
 
 
   const { items } = state;
@@ -38,9 +38,8 @@ function CheckoutLogic() {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Table number is missing. Please scan the QR code again.',
+        description: 'Table number is missing.',
       });
-      router.push('/scan');
       return;
     }
     // In a real app, this would trigger a server action to save the order
@@ -57,16 +56,10 @@ function CheckoutLogic() {
     router.push(`/order/${orderId}?table=${tableNumber}`);
   };
   
-    if (isLoading || !tableNumber) {
+    if (!tableNumber) {
     return (
       <div className="flex flex-col items-center justify-center text-center h-64">
-        <Alert variant="destructive" className="max-w-sm">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Missing Table Number</AlertTitle>
-          <AlertDescription>
-            We couldn't find your table number. Redirecting you to scan your table's QR code...
-          </AlertDescription>
-        </Alert>
+        <p>Loading table information...</p>
       </div>
     );
   }
