@@ -21,11 +21,9 @@ function CheckoutLogic() {
     if (storedTable) {
       setTableNumber(storedTable);
     } else {
-      // If no table number, default to 1
-      localStorage.setItem('tableNumber', '1');
-      setTableNumber('1');
+      router.replace('/scan');
     }
-  }, []);
+  }, [router]);
 
 
   const { items } = state;
@@ -38,8 +36,9 @@ function CheckoutLogic() {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Table number is missing.',
+        description: 'Table number is missing. Please scan a QR code.',
       });
+      router.push('/scan');
       return;
     }
     // In a real app, this would trigger a server action to save the order
@@ -59,7 +58,16 @@ function CheckoutLogic() {
     if (!tableNumber) {
     return (
       <div className="flex flex-col items-center justify-center text-center h-64">
-        <p>Loading table information...</p>
+         <Alert variant="destructive" className="max-w-md">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>No Table Selected</AlertTitle>
+            <AlertDescription>
+              We need a table number to proceed. Please go back and scan a QR code.
+            </AlertDescription>
+          </Alert>
+          <Button onClick={() => router.push('/scan')} className="mt-4">
+            Scan QR Code
+          </Button>
       </div>
     );
   }
@@ -117,7 +125,7 @@ function CheckoutLogic() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full font-bold" size="lg" onClick={handlePlaceOrder} disabled={!tableNumber || items.length === 0}>
+            <Button className="w-full font-bold" size="lg" onClick={handlePlaceOrder} disabled={items.length === 0}>
               Place Order
             </Button>
           </CardFooter>
