@@ -23,6 +23,10 @@ function MenuContent() {
       localStorage.setItem('tableNumber', table);
       // Use replace to avoid adding to browser history
       router.replace(`/?category=${currentCategory}#menu`);
+    } else if (!localStorage.getItem('tableNumber')) {
+      // If there's no table in the URL and no table in storage,
+      // redirect to the scan page.
+      router.push('/scan');
     }
   }, [table, router, currentCategory]);
 

@@ -39,7 +39,7 @@ function CheckoutLogic() {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Table number is missing. Please return to the menu.',
+        description: 'Table number is missing. Please scan a QR code.',
       });
       router.push('/');
       return;
@@ -82,7 +82,7 @@ function CheckoutLogic() {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>No Table Selected</AlertTitle>
               <AlertDescription>
-                We don't have a table number for your order. Please go back to the menu and select a table.
+                We don't have a table number for your order. Please go back and scan a QR code.
               </AlertDescription>
             </Alert>
             <Button onClick={() => router.push('/')} className="mt-4">

@@ -3,13 +3,14 @@
 import { cn } from '@/lib/utils';
 import { Check, Loader, ChefHat, GlassWater } from 'lucide-react';
 import type { OrderStatus as OrderStatusType } from '@/lib/types';
+import React from 'react';
 
 interface OrderStatusProps {
   currentStatus: OrderStatusType;
   statuses: OrderStatusType[];
 }
 
-const statusIcons = {
+const statusIcons: Record<OrderStatusType, React.ReactElement> = {
   'Preparing': <Loader />,
   'Cooking': <ChefHat />,
   'Served': <GlassWater />,
@@ -43,7 +44,7 @@ export function OrderStatus({ currentStatus, statuses }: OrderStatusProps) {
                 )}
               >
                 {isCompleted ? <Check className="h-5 w-5" /> : 
-                 React.cloneElement(statusIcons[status] || <Loader />, { className: cn('h-5 w-5', isActive && 'animate-spin') })
+                 React.cloneElement(statusIcons[status] || <Loader />, { className: cn('h-5 w-5', isActive && status !== 'Served' && 'animate-spin') })
                 }
               </div>
               <p
