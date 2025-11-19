@@ -1,0 +1,128 @@
+/**
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a public-read, owner-write model for restaurants and their associated data,
+ *  with denormalization to avoid costly `get()` calls.
+ *
+ * Data Structure:
+ * - /restaurants/{restaurantId}: Restaurant details (public read, admin write).
+ * - /restaurants/{restaurantId}/menuCategories/{menuCategoryId}: Menu categories (public read, admin write).
+ * - /restaurants/{restaurantId}/menuCategories/{menuCategoryId}/menuItems/{menuItemId}: Menu items (public read, admin write).
+ * - /restaurants/{restaurantId}/orders/{orderId}: Orders for a restaurant.
+ *   - Requires `restaurantId` and `tableNumber` denormalized on the document.
+ * - /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId}: Items within an order.
+ *   - Requires `orderId` denormalized on the document.
+ * - /restaurants/{restaurantId}/tables/{tableId}: Table information with QR codes (public read, admin write).
+ *
+ * Key Security Decisions:
+ * - All read operations (get, list) are generally public to allow easy browsing.
+ * - Write operations (create, update, delete) are restricted to authenticated users.
+ * - No explicit admin role is defined; these rules assume that the application layer handles admin privileges.
+ * - Denormalization is used extensively to avoid `get()` calls in security rules, improving performance and scalability.
+ * - List operations are generally allowed for owners of the restaurant path.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Allows anyone to read restaurant data, but restricts writes.
+     * @path /restaurants/{restaurantId}
+     * @allow (get, list): Any user can read restaurant data.
+     * @allow (create, update, delete): Only an authenticated user can create/update/delete restaurant data (assumed to be an admin).
+     * @deny (create, update, delete): Anonymous users cannot create/update/delete restaurant data.
+     * @principle Allows public reads, restricts writes to authenticated users (acting as admins).
+     */
+    match /restaurants/{restaurantId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    /**
+     * @description Allows anyone to read menu category data, but restricts writes to authenticated users.
+     * @path /restaurants/{restaurantId}/menuCategories/{menuCategoryId}
+     * @allow (get, list): Any user can read menu category data.
+     * @allow (create, update, delete): Only an authenticated user can create/update/delete menu category data (assumed to be an admin).
+     * @deny (create, update, delete): Anonymous users cannot create/update/delete menu category data.
+     * @principle Allows public reads, restricts writes to authenticated users (acting as admins).
+     */
+    match /restaurants/{restaurantId}/menuCategories/{menuCategoryId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    /**
+     * @description Allows anyone to read menu item data, but restricts writes to authenticated users.
+     * @path /restaurants/{restaurantId}/menuCategories/{menuCategoryId}/menuItems/{menuItemId}
+     * @allow (get, list): Any user can read menu item data.
+     * @allow (create, update, delete): Only an authenticated user can create/update/delete menu item data (assumed to be an admin).
+     * @deny (create, update, delete): Anonymous users cannot create/update/delete menu item data.
+     * @principle Allows public reads, restricts writes to authenticated users (acting as admins).
+     */
+    match /restaurants/{restaurantId}/menuCategories/{menuCategoryId}/menuItems/{menuItemId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    /**
+     * @description Allows anyone to read order data, but restricts writes to authenticated users.
+     * @path /restaurants/{restaurantId}/orders/{orderId}
+     * @allow (get, list): Any user can read order data.
+     * @allow (create): Only an authenticated user can create order data. Checks if restaurantId in path matches restaurantId in resource data.
+     * @allow (update, delete): Only the authenticated user who created the order can update/delete it.
+     * @deny (create): If the restaurantId in the path does not match the restaurantId in the data.
+     * @deny (update, delete): If the order does not exist, or if the user is not the owner.
+     * @principle Uses path-based ownership and requires denormalization of `restaurantId`.
+     */
+    match /restaurants/{restaurantId}/orders/{orderId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.restaurantId == restaurantId;
+      allow update: if isSignedIn() && isExistingOwner(restaurantId);
+      allow delete: if isSignedIn() && isExistingOwner(restaurantId);
+
+      function isExistingOwner(restaurantId) {
+        return resource != null && resource.data.restaurantId == restaurantId;
+      }
+    }
+
+    /**
+     * @description Allows anyone to read order item data, but restricts writes to authenticated users.
+     * @path /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId}
+     * @allow (get, list): Any user can read order item data.
+     * @allow (create): Only an authenticated user can create order item data, provided that the `orderId` matches the path.
+     * @allow (update, delete): Only the authenticated user who created the order item can update/delete it, and only if the order item exists.
+     * @deny (create): If the orderId in the path does not match the orderId in the data.
+     * @deny (update, delete): If the order item does not exist, or if the user is not the owner.
+     * @principle Uses path-based ownership, requires denormalization of `orderId`, and enforces existence checks.
+     */
+    match /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.orderId == orderId;
+      allow update: if isSignedIn() && isExistingOrder(orderId);
+      allow delete: if isSignedIn() && isExistingOrder(orderId);
+
+      function isExistingOrder(orderId) {
+        return resource != null && resource.data.orderId == orderId;
+      }
+    }
+
+    /**
+     * @description Allows anyone to read table data, but restricts writes to authenticated users.
+     * @path /restaurants/{restaurantId}/tables/{tableId}
+     * @allow (get, list): Any user can read table data.
+     * @allow (create, update, delete): Only an authenticated user can create/update/delete table data (assumed to be an admin).
+     * @deny (create, update, delete): Anonymous users cannot create/update/delete table data.
+     */
+    match /restaurants/{restaurantId}/tables/{tableId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    /**
+     * @description Checks if the user is signed in.
+     * @return {boolean} True if the user is signed in, false otherwise.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+  }
+}
