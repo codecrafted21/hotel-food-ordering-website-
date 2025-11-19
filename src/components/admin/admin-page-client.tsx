@@ -6,39 +6,51 @@ import { updateOrderStatus } from '@/lib/order-manager';
 import type { Order, OrderStatus } from '@/lib/types';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ChefHat, CookingPot, Loader2 } from 'lucide-react';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import { collection, query, where, orderBy, Firestore } from 'firebase/firestore';
 
 const ALL_STATUSES: OrderStatus[] = ['Preparing', 'Cooking', 'Served'];
 
 export default function AdminPageClient() {
   const firestore = useFirestore();
+  const { user, isUserLoading } = useUser();
   const [filter, setFilter] = useState<string[]>(['Preparing', 'Cooking']);
 
-  // This query will fetch all orders that are not 'Served' and order them by creation time.
-  // The useCollection hook will update this in real-time.
   const ordersQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    // Only construct the query if we have an authenticated user and a firestore instance
+    if (!firestore || !user) return null;
+    
     const restaurantId = "tablebites-restaurant";
     return query(
         collection(firestore, `restaurants/${restaurantId}/orders`),
         where('status', 'in', ['Preparing', 'Cooking']),
         orderBy('orderDate', 'asc')
     );
-  }, [firestore]);
+  }, [firestore, user]); // Depend on the user object
 
-  const { data: orders, isLoading } = useCollection<Order>(ordersQuery);
+  const { data: orders, isLoading: isLoadingOrders } = useCollection<Order>(ordersQuery);
 
   const handleStatusUpdate = (firestore: Firestore, orderId: string, newStatus: OrderStatus) => {
     const restaurantId = "tablebites-restaurant";
     updateOrderStatus(firestore, restaurantId, orderId, newStatus);
   };
+  
+  const isLoading = isUserLoading || isLoadingOrders;
 
   if (isLoading) {
     return (
         <div className="flex justify-center items-center h-64">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="ml-4">Loading Live Orders...</p>
+        </div>
+    )
+  }
+  
+  if (!user) {
+    return (
+        <div className="text-center py-16 border-2 border-dashed rounded-lg">
+            <h2 className="text-xl font-semibold">Please Log In</h2>
+            <p className="text-muted-foreground mt-2">You need to be logged in to view live orders.</p>
         </div>
     )
   }
@@ -67,7 +79,7 @@ export default function AdminPageClient() {
       {filteredOrders && filteredOrders.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredOrders.map(order => (
-            <OrderCard key={order.id} order={order} onStatusUpdate={(orderId, newStatus) => handleStatusUpdate(firestore, orderId, newStatus)} />
+            <OrderCard key={order.id} order={order} onStatusUpdate={(orderId, newStatus) => handleStatusUpdate(firestore!, orderId, newStatus)} />
           ))}
         </div>
       ) : (
