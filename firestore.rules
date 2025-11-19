@@ -64,9 +64,9 @@ service cloud.firestore {
     }
 
     /**
-     * @description Allows anyone to read order data, but restricts writes to authenticated users.
+     * @description Allows authenticated users to read order data, and restricts writes.
      * @path /restaurants/{restaurantId}/orders/{orderId}
-     * @allow (get, list): Any user can read order data.
+     * @allow (get, list): Any authenticated user can read order data (customers and admins).
      * @allow (create): Only an authenticated user can create order data. Checks if restaurantId in path matches restaurantId in resource data.
      * @allow (update, delete): Only the authenticated user who created the order can update/delete it.
      * @deny (create): If the restaurantId in the path does not match the restaurantId in the data.
@@ -74,7 +74,7 @@ service cloud.firestore {
      * @principle Uses path-based ownership and requires denormalization of `restaurantId`.
      */
     match /restaurants/{restaurantId}/orders/{orderId} {
-      allow get, list: if true;
+      allow get, list: if isSignedIn();
       allow create: if isSignedIn() && request.resource.data.restaurantId == restaurantId;
       allow update: if isSignedIn() && isExistingOwner(restaurantId);
       allow delete: if isSignedIn() && isExistingOwner(restaurantId);
@@ -85,9 +85,9 @@ service cloud.firestore {
     }
 
     /**
-     * @description Allows anyone to read order item data, but restricts writes to authenticated users.
+     * @description Allows authenticated users to read order item data, and restricts writes.
      * @path /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId}
-     * @allow (get, list): Any user can read order item data.
+     * @allow (get, list): Any authenticated user can read order item data.
      * @allow (create): Only an authenticated user can create order item data, provided that the `orderId` matches the path.
      * @allow (update, delete): Only the authenticated user who created the order item can update/delete it, and only if the order item exists.
      * @deny (create): If the orderId in the path does not match the orderId in the data.
@@ -95,7 +95,7 @@ service cloud.firestore {
      * @principle Uses path-based ownership, requires denormalization of `orderId`, and enforces existence checks.
      */
     match /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId} {
-      allow get, list: if true;
+      allow get, list: if isSignedIn();
       allow create: if isSignedIn() && request.resource.data.orderId == orderId;
       allow update: if isSignedIn() && isExistingOrder(orderId);
       allow delete: if isSignedIn() && isExistingOrder(orderId);
