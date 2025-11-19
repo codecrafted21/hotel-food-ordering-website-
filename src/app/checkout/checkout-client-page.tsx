@@ -9,6 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { AlertCircle, Home } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { addOrder } from '@/lib/order-manager';
+import type { Order } from '@/lib/types';
 
 function CheckoutLogic() {
   const router = useRouter();
@@ -42,9 +44,18 @@ function CheckoutLogic() {
       router.push('/');
       return;
     }
-    // In a real app, this would trigger a server action to save the order
+    
     const orderId = `TB-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-    console.log('Placing order:', { orderId, tableNumber, items, total });
+    const newOrder: Order = {
+      id: orderId,
+      tableNumber: parseInt(tableNumber, 10),
+      items: items,
+      total: total,
+      status: 'Preparing',
+      createdAt: new Date(),
+    };
+
+    addOrder(newOrder);
 
     dispatch({ type: 'CLEAR_CART' });
 
@@ -71,7 +82,7 @@ function CheckoutLogic() {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>No Table Selected</AlertTitle>
               <AlertDescription>
-                We don't have a table number for your order. Please go back to the menu.
+                We don't have a table number for your order. Please go back to the menu and select a table.
               </AlertDescription>
             </Alert>
             <Button onClick={() => router.push('/')} className="mt-4">

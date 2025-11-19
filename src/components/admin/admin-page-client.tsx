@@ -1,27 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { OrderCard } from './order-card';
-import { MOCK_ORDERS } from '@/lib/data';
+import { getOrders, updateOrderStatus } from '@/lib/order-manager';
 import type { Order, OrderStatus } from '@/lib/types';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { ChefHat, CookingPot, GlassWater } from 'lucide-react';
+import { ChefHat, CookingPot } from 'lucide-react';
 
 const ALL_STATUSES: OrderStatus[] = ['Preparing', 'Cooking', 'Served'];
 
 export default function AdminPageClient() {
-  const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS.filter(o => o.status !== 'Served'));
-  const [filter, setFilter] = useState<string[]>(ALL_STATUSES);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [filter, setFilter] = useState<string[]>(['Preparing', 'Cooking']);
+
+  useEffect(() => {
+    // Load initial orders
+    const loadOrders = () => {
+      const liveOrders = getOrders().filter(o => o.status !== 'Served');
+      setOrders(liveOrders);
+    };
+    
+    loadOrders();
+
+    // Listen for custom event to reload orders
+    window.addEventListener('orders-updated', loadOrders);
+
+    // Cleanup listener on component unmount
+    return () => {
+      window.removeEventListener('orders-updated', loadOrders);
+    };
+  }, []);
 
 
   const handleStatusUpdate = (orderId: string, newStatus: OrderStatus) => {
-    setOrders(prevOrders => {
-      if (newStatus === 'Served') {
-        // Remove the order from the active list
-        return prevOrders.filter(o => o.id !== orderId);
-      }
-      return prevOrders.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
-    });
+    const updatedOrders = updateOrderStatus(orderId, newStatus);
+    setOrders(updatedOrders.filter(o => o.status !== 'Served'));
   };
 
   const filteredOrders = orders.filter(order => filter.includes(order.status));
@@ -33,7 +46,7 @@ export default function AdminPageClient() {
                 type="multiple"
                 variant="outline"
                 value={filter}
-                onValueChange={(value) => setFilter(value.length > 0 ? value : ALL_STATUSES)}
+                onValueChange={(value) => setFilter(value.length > 0 ? value : [])}
                 aria-label="Filter order status"
             >
                 <ToggleGroupItem value="Preparing" aria-label="Toggle Preparing">
