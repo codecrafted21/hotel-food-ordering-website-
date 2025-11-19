@@ -31,17 +31,21 @@ service cloud.firestore {
 
       /**
        * @description Rules for the 'orders' subcollection.
-       *              - Admins can list all orders.
-       *              - Any signed-in user can create an order.
-       *              - Only admins can read, update, or delete a specific order.
+       *              - This block handles collection-level queries.
+       *              - Only admins are allowed to list (query) the orders collection.
        */
-      // Rule for listing the entire collection
-      match /orders {
-        allow list: if isAdmin();
-      }
-
-      // Rule for actions on a single document
       match /orders/{orderId} {
+        
+        /**
+        * @description Rule for listing the entire collection. Admins can list all orders.
+        */
+        allow list: if isAdmin();
+
+        /**
+        * @description Rules for actions on a single document.
+        *              - Any signed-in user (including anonymous) can create an order.
+        *              - Only admins can read, update, or delete a specific order.
+        */
         allow get, update, delete: if isAdmin();
         allow create: if isSignedIn();
 
