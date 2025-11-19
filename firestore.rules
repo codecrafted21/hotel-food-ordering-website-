@@ -1,22 +1,16 @@
 /**
  * @file Firestore Security Rules
- * @description This ruleset enforces a public-read, owner-write model for restaurants and their associated data,
- *  with denormalization to avoid costly `get()` calls.
+ * @description This ruleset enforces a public-read model for restaurants and their associated data.
+ *  It allows anonymous users to create orders, and allows anyone to view the list of orders for the admin panel.
  *
  * Data Structure:
  * - /restaurants/{restaurantId}: Restaurant details (public read, admin write).
  * - /restaurants/{restaurantId}/menuCategories/{menuCategoryId}: Menu categories (public read, admin write).
  * - /restaurants/{restaurantId}/menuCategories/{menuCategoryId}/menuItems/{menuItemId}: Menu items (public read, admin write).
  * - /restaurants/{restaurantId}/orders/{orderId}: Orders for a restaurant.
- *   - Requires `restaurantId` and `tableNumber` denormalized on the document.
  * - /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId}: Items within an order.
- *   - Requires `orderId` denormalized on the document.
  * - /restaurants/{restaurantId}/tables/{tableId}: Table information with QR codes (public read, admin write).
  *
- * Key Security Decisions:
- * - All read operations (get, list) are generally public to allow easy browsing.
- * - Write operations (create, update, delete) are restricted to authenticated users.
- * - Denormalization is used extensively to avoid `get()` calls in security rules, improving performance and scalability.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -29,58 +23,59 @@ service cloud.firestore {
     match /restaurants/{restaurantId} {
       allow get, list: if true;
       allow create, update, delete: if isSignedIn();
+
+        /**
+         * @description Allows anyone to read menu category data, but restricts writes to authenticated users.
+         * @path /restaurants/{restaurantId}/menuCategories/{menuCategoryId}
+         */
+        match /menuCategories/{menuCategoryId} {
+          allow get, list: if true;
+          allow create, update, delete: if isSignedIn();
+
+          /**
+           * @description Allows anyone to read menu item data, but restricts writes to authenticated users.
+           * @path /restaurants/{restaurantId}/menuCategories/{menuCategoryId}/menuItems/{menuItemId}
+           */
+          match /menuItems/{menuItemId} {
+            allow get, list: if true;
+            allow create, update, delete: if isSignedIn();
+          }
+        }
+
+        /**
+         * @description Publicly readable orders, but write access is restricted.
+         * @path /restaurants/{restaurantId}/orders
+         */
+        match /orders/{orderId} {
+          allow get: if true;
+          allow list: if true; // Allow public list access for the admin panel
+          allow create: if isSignedIn(); // Allow any signed-in user (including anonymous) to create orders
+          allow update, delete: if isAdmin(); // Only admin can update or delete
+          
+          /**
+           * @description Allows read access to order items, but restricts writes.
+           * @path /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId}
+           */
+          match /orderItems/{orderItemId} {
+            allow get, list: if true;
+            allow create: if isSignedIn();
+            allow update, delete: if isAdmin();
+          }
+        }
+
+        /**
+         * @description Allows anyone to read table data, but restricts writes to authenticated users.
+         * @path /restaurants/{restaurantId}/tables/{tableId}
+         */
+        match /tables/{tableId} {
+          allow get, list: if true;
+          allow create, update, delete: if isSignedIn();
+        }
     }
 
-    /**
-     * @description Allows anyone to read menu category data, but restricts writes to authenticated users.
-     * @path /restaurants/{restaurantId}/menuCategories/{menuCategoryId}
-     */
-    match /restaurants/{restaurantId}/menuCategories/{menuCategoryId} {
-      allow get, list: if true;
-      allow create, update, delete: if isSignedIn();
-    }
 
     /**
-     * @description Allows anyone to read menu item data, but restricts writes to authenticated users.
-     * @path /restaurants/{restaurantId}/menuCategories/{menuCategoryId}/menuItems/{menuItemId}
-     */
-    match /restaurants/{restaurantId}/menuCategories/{menuCategoryId}/menuItems/{menuItemId} {
-      allow get, list: if true;
-      allow create, update, delete: if isSignedIn();
-    }
-
-    /**
-     * @description Publicly readable orders, but write access is restricted.
-     * @path /restaurants/{restaurantId}/orders/{orderId}
-     */
-    match /restaurants/{restaurantId}/orders/{orderId} {
-      allow get, list: if true; // Allow public read access
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid; // Only the user can create their own order
-      allow update: if isSignedIn() && (isOwner(resource) || isAdmin()); // Only owner or admin can update
-      allow delete: if isSignedIn() && (isAdmin()); // Only admin can delete
-    }
-
-    /**
-     * @description Allows read access to order items, but restricts writes.
-     * @path /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId}
-     */
-    match /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId} {
-      allow get, list: if true; // Allow public read access
-      allow create: if isSignedIn(); // Any signed-in user (including anonymous) can create items for an order
-      allow update, delete: if isSignedIn() && (isParentOrderOwner(restaurantId, orderId) || isAdmin());
-    }
-
-    /**
-     * @description Allows anyone to read table data, but restricts writes to authenticated users.
-     * @path /restaurants/{restaurantId}/tables/{tableId}
-     */
-    match /restaurants/{restaurantId}/tables/{tableId} {
-      allow get, list: if true;
-      allow create, update, delete: if isSignedIn();
-    }
-
-    /**
-     * @description Checks if the user is signed in.
+     * @description Checks if the user is signed in. This can be an anonymous user.
      * @return {boolean} True if the user is signed in, false otherwise.
      */
     function isSignedIn() {
@@ -88,30 +83,11 @@ service cloud.firestore {
     }
     
     /**
-     * @description Checks if the current user is the owner of the resource.
-     * Assumes a 'userId' field on the resource.
-     * @return {boolean} True if the user is the owner.
-     */
-    function isOwner(doc) {
-      return doc.data.userId == request.auth.uid;
-    }
-
-    /**
      * @description Checks if the user is an admin.
      * @return {boolean} True if the user's email is the admin email, false otherwise.
      */
     function isAdmin() {
       return request.auth != null && request.auth.token.email == "admin@tablebites.com";
-    }
-
-    /**
-     * @description Checks if the current user owns the parent order document.
-     * @param restaurantId The ID of the restaurant.
-     * @param orderId The ID of the order.
-     * @return {boolean} True if the user owns the parent order.
-     */
-    function isParentOrderOwner(restaurantId, orderId) {
-      return get(/databases/$(database)/documents/restaurants/$(restaurantId)/orders/$(orderId)).data.userId == request.auth.uid;
     }
   }
 }
