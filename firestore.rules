@@ -16,9 +16,7 @@
  * Key Security Decisions:
  * - All read operations (get, list) are generally public to allow easy browsing.
  * - Write operations (create, update, delete) are restricted to authenticated users.
- * - No explicit admin role is defined; these rules assume that the application layer handles admin privileges.
  * - Denormalization is used extensively to avoid `get()` calls in security rules, improving performance and scalability.
- * - List operations are generally allowed for owners of the restaurant path.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -27,10 +25,6 @@ service cloud.firestore {
     /**
      * @description Allows anyone to read restaurant data, but restricts writes.
      * @path /restaurants/{restaurantId}
-     * @allow (get, list): Any user can read restaurant data.
-     * @allow (create, update, delete): Only an authenticated user can create/update/delete restaurant data (assumed to be an admin).
-     * @deny (create, update, delete): Anonymous users cannot create/update/delete restaurant data.
-     * @principle Allows public reads, restricts writes to authenticated users (acting as admins).
      */
     match /restaurants/{restaurantId} {
       allow get, list: if true;
@@ -40,10 +34,6 @@ service cloud.firestore {
     /**
      * @description Allows anyone to read menu category data, but restricts writes to authenticated users.
      * @path /restaurants/{restaurantId}/menuCategories/{menuCategoryId}
-     * @allow (get, list): Any user can read menu category data.
-     * @allow (create, update, delete): Only an authenticated user can create/update/delete menu category data (assumed to be an admin).
-     * @deny (create, update, delete): Anonymous users cannot create/update/delete menu category data.
-     * @principle Allows public reads, restricts writes to authenticated users (acting as admins).
      */
     match /restaurants/{restaurantId}/menuCategories/{menuCategoryId} {
       allow get, list: if true;
@@ -53,10 +43,6 @@ service cloud.firestore {
     /**
      * @description Allows anyone to read menu item data, but restricts writes to authenticated users.
      * @path /restaurants/{restaurantId}/menuCategories/{menuCategoryId}/menuItems/{menuItemId}
-     * @allow (get, list): Any user can read menu item data.
-     * @allow (create, update, delete): Only an authenticated user can create/update/delete menu item data (assumed to be an admin).
-     * @deny (create, update, delete): Anonymous users cannot create/update/delete menu item data.
-     * @principle Allows public reads, restricts writes to authenticated users (acting as admins).
      */
     match /restaurants/{restaurantId}/menuCategories/{menuCategoryId}/menuItems/{menuItemId} {
       allow get, list: if true;
@@ -64,40 +50,29 @@ service cloud.firestore {
     }
 
     /**
-     * @description Allows authenticated users to read order data, and restricts writes.
+     * @description Publicly readable orders, but write access is restricted.
      * @path /restaurants/{restaurantId}/orders/{orderId}
-     * @allow (get): Authenticated users can read their own orders.
-     * @allow (list): Only admins can list all orders.
-     * @allow (create): Any authenticated user (including anonymous) can create an order.
-     * @allow (update, delete): Only the user who created the order or an admin can update/delete it.
      */
     match /restaurants/{restaurantId}/orders/{orderId} {
-      allow get: if isSignedIn() && (isOwner() || isAdmin());
-      allow list: if isAdmin();
-      allow create: if isSignedIn() && request.resource.data.restaurantId == restaurantId && request.resource.data.userId == request.auth.uid;
-      allow update: if isSignedIn() && (isOwner() || isAdmin());
-      allow delete: if isSignedIn() && (isOwner() || isAdmin());
+      allow get, list: if true; // Allow public read access
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid; // Only the user can create their own order
+      allow update: if isSignedIn() && (isOwner(resource) || isAdmin()); // Only owner or admin can update
+      allow delete: if isSignedIn() && (isAdmin()); // Only admin can delete
     }
 
     /**
-     * @description Allows authenticated users to read order item data, and restricts writes.
+     * @description Allows read access to order items, but restricts writes.
      * @path /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId}
-     * @allow (get, list): Authenticated user who owns the parent order or an admin can read order items.
-     * @allow (create): Any authenticated user can create order items for an order they are creating.
-     * @allow (update, delete): Only the owner of the parent order or an admin can update/delete order items.
      */
     match /restaurants/{restaurantId}/orders/{orderId}/orderItems/{orderItemId} {
-      allow get, list: if isSignedIn() && (isParentOrderOwner(restaurantId, orderId) || isAdmin());
-      allow create: if isSignedIn() && request.resource.data.orderId == orderId;
+      allow get, list: if true; // Allow public read access
+      allow create: if isSignedIn(); // Any signed-in user (including anonymous) can create items for an order
       allow update, delete: if isSignedIn() && (isParentOrderOwner(restaurantId, orderId) || isAdmin());
     }
 
     /**
      * @description Allows anyone to read table data, but restricts writes to authenticated users.
      * @path /restaurants/{restaurantId}/tables/{tableId}
-     * @allow (get, list): Any user can read table data.
-     * @allow (create, update, delete): Only an authenticated user can create/update/delete table data (assumed to be an admin).
-     * @deny (create, update, delete): Anonymous users cannot create/update/delete table data.
      */
     match /restaurants/{restaurantId}/tables/{tableId} {
       allow get, list: if true;
@@ -117,8 +92,8 @@ service cloud.firestore {
      * Assumes a 'userId' field on the resource.
      * @return {boolean} True if the user is the owner.
      */
-    function isOwner() {
-      return resource.data.userId == request.auth.uid;
+    function isOwner(doc) {
+      return doc.data.userId == request.auth.uid;
     }
 
     /**

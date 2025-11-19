@@ -5,28 +5,25 @@ import { OrderCard } from './order-card';
 import { updateOrderStatus } from '@/lib/order-manager';
 import type { Order, OrderStatus } from '@/lib/types';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { ChefHat, CookingPot, Loader2 } from 'lucide-react';
-import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
+import { ChefHat, CookingPot, Loader2, Utensils } from 'lucide-react';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, where, orderBy, Firestore } from 'firebase/firestore';
-
-const ALL_STATUSES: OrderStatus[] = ['Preparing', 'Cooking', 'Served'];
 
 export default function AdminPageClient() {
   const firestore = useFirestore();
-  const { user, isUserLoading } = useUser();
   const [filter, setFilter] = useState<string[]>(['Preparing', 'Cooking']);
 
   const ordersQuery = useMemoFirebase(() => {
-    // Only construct the query if we have an authenticated user and a firestore instance
-    if (!firestore || !user) return null;
+    if (!firestore) return null;
     
     const restaurantId = "tablebites-restaurant";
+    // This query now fetches all non-served orders
     return query(
         collection(firestore, `restaurants/${restaurantId}/orders`),
         where('status', 'in', ['Preparing', 'Cooking']),
         orderBy('orderDate', 'asc')
     );
-  }, [firestore, user]); // Depend on the user object
+  }, [firestore]);
 
   const { data: orders, isLoading: isLoadingOrders } = useCollection<Order>(ordersQuery);
 
@@ -35,22 +32,11 @@ export default function AdminPageClient() {
     updateOrderStatus(firestore, restaurantId, orderId, newStatus);
   };
   
-  const isLoading = isUserLoading || isLoadingOrders;
-
-  if (isLoading) {
+  if (isLoadingOrders) {
     return (
         <div className="flex justify-center items-center h-64">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="ml-4">Loading Live Orders...</p>
-        </div>
-    )
-  }
-  
-  if (!user) {
-    return (
-        <div className="text-center py-16 border-2 border-dashed rounded-lg">
-            <h2 className="text-xl font-semibold">Please Log In</h2>
-            <p className="text-muted-foreground mt-2">You need to be logged in to view live orders.</p>
         </div>
     )
   }
@@ -84,8 +70,9 @@ export default function AdminPageClient() {
         </div>
       ) : (
         <div className="text-center py-16 border-2 border-dashed rounded-lg">
-            <h2 className="text-xl font-semibold">All Caught Up!</h2>
-            <p className="text-muted-foreground mt-2">No active orders matching your filter.</p>
+            <Utensils className="mx-auto h-12 w-12 text-muted-foreground" />
+            <h2 className="text-xl font-semibold mt-4">All Caught Up!</h2>
+            <p className="text-muted-foreground mt-2">No active orders matching your filter right now.</p>
         </div>
       )}
     </div>

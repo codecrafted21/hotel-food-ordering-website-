@@ -66,7 +66,7 @@ export default function Header() {
                 </span>
               )}
             </Button>
-            <Link href="/admin/login">
+            <Link href="/admin">
               <Button variant="outline" size="sm" className="rounded-full hidden sm:flex">
                 <User className="h-4 w-4 mr-2" />
                 Admin
