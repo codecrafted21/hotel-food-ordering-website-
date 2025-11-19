@@ -26,11 +26,11 @@ export function TableManagementClient({ tables: initialTables, waiters }: TableM
     );
   };
   
-  const getBaseUrl = () => {
+  const getQrUrl = (tableId: number) => {
     if (typeof window !== 'undefined') {
-      return window.location.origin;
+      return `${window.location.origin}/?table=${tableId}`;
     }
-    return '';
+    return `/?table=${tableId}`;
   }
 
   return (
@@ -102,7 +102,7 @@ export function TableManagementClient({ tables: initialTables, waiters }: TableM
           <QrCodeDialog
             tableId={selectedQr.tableId}
             waiterName={selectedQr.waiter?.name}
-            qrUrl={`${getBaseUrl()}/?table=${selectedQr.tableId}`}
+            qrUrl={getQrUrl(selectedQr.tableId)}
             onOpenChange={(isOpen) => !isOpen && setSelectedQr(null)}
           />
       )}
