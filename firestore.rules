@@ -1,25 +1,25 @@
 rules_version = '2';
 
-function isAdmin() {
-  return request.auth != null
-      && request.auth.token.email == "admin@tablebites.com";
-}
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == "admin@tablebites.com";
+    }
+
     match /restaurants/{restaurantId} {
-      
-      // Rule for querying the 'orders' collection.
-      // This allows admins to list orders, specifically when filtering by 'status'.
-      match /orders/{orderId} {
-        allow list: if isAdmin() && request.query.keys().hasOnly(['status']);
+      // Allow admins to list and read orders.
+      // This rule allows the query being made by the admin dashboard.
+      allow list, read: if isAdmin();
 
-        // Rule for accessing a single order document.
-        allow read, write: if isAdmin();
+      // Allow any authenticated user (including anonymous users) to create an order.
+      allow create: if request.auth != null;
 
-        // Allow any authenticated user (including anonymous) to create an order.
-        allow create: if request.auth != null;
+      // Allow admins to update or delete any order.
+      allow update, delete: if isAdmin();
+
+      // Rules for the orderItems subcollection can be added here if needed.
+      match /orders/{orderId}/orderItems/{orderItemId} {
+          allow read, write: if isAdmin();
       }
     }
   }
