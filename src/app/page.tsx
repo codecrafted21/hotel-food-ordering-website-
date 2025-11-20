@@ -7,7 +7,7 @@ import { DISHES, CATEGORIES } from '@/lib/data';
 import { DishCard } from '@/components/menu/dish-card';
 import { CategoryCarousel } from '@/components/menu/category-carousel';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useAuth } from '@/firebase';
+import { useAuth, useUser } from '@/firebase';
 import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 
 function MenuContent() {
@@ -15,6 +15,7 @@ function MenuContent() {
   const searchParams = useSearchParams();
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
   const auth = useAuth();
+  const { user, isUserLoading } = useUser();
 
   const currentCategory = searchParams.get('category') || CATEGORIES[0].id;
   const table = searchParams.get('table');
@@ -35,15 +36,10 @@ function MenuContent() {
 
   useEffect(() => {
     // Automatically sign in the user anonymously if they are not already.
-    if (auth) {
-      const unsubscribe = auth.onAuthStateChanged(user => {
-        if (!user) {
-          initiateAnonymousSignIn(auth);
-        }
-      });
-      return () => unsubscribe();
+    if (!isUserLoading && !user && auth) {
+        initiateAnonymousSignIn(auth);
     }
-  }, [auth]);
+  }, [auth, user, isUserLoading]);
 
 
   const filteredDishes = DISHES.filter(
