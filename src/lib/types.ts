@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 export type ImagePlaceholder = {
   id: string;
   description: string;
@@ -32,7 +34,7 @@ export type Order = {
   id: string; // Document ID
   restaurantId: string;
   tableNumber: string;
-  orderDate: string; // ISO String date
+  orderDate: Timestamp | string; // Can be a Timestamp from Firestore or a string
   status: OrderStatus;
   userId: string; // The UID of the user who placed the order
 };

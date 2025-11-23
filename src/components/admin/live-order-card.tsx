@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, Timestamp } from 'firebase/firestore';
 import type { Order, OrderItem } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -34,15 +34,20 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
 
   useEffect(() => {
     if (order.orderDate) {
-      // Firebase Timestamps need to be converted to JS Dates
-      const date = new Date(order.orderDate);
-      setTimeAgo(formatDistanceToNow(date, { addSuffix: true }));
-
-      const interval = setInterval(() => {
+      // Convert Firestore Timestamp to JS Date, if needed
+      const date = order.orderDate instanceof Timestamp
+        ? order.orderDate.toDate()
+        : new Date(order.orderDate);
+        
+      if (!isNaN(date.getTime())) {
         setTimeAgo(formatDistanceToNow(date, { addSuffix: true }));
-      }, 60000); // Update every minute
 
-      return () => clearInterval(interval);
+        const interval = setInterval(() => {
+            setTimeAgo(formatDistanceToNow(date, { addSuffix: true }));
+        }, 60000); // Update every minute
+
+        return () => clearInterval(interval);
+      }
     }
   }, [order.orderDate]);
   
