@@ -27,7 +27,7 @@ export type CartItem = {
   quantity: number;
 };
 
-export type OrderStatus = 'Preparing' | 'Cooking' | 'Served' | 'Canceled';
+export type OrderStatus = 'Preparing' | 'Cooking' | 'Served' | 'Bill Requested' | 'Canceled';
 
 // This represents an Order document in Firestore
 export type Order = {

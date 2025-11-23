@@ -7,8 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import type { OrderStatus as OrderStatusType, OrderItem, Order } from '@/lib/types';
 import { useCollection, useFirestore, useMemoFirebase, useDoc } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
-import { Loader2 } from 'lucide-react';
+import { CreditCard, Loader2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { updateOrderStatus } from '@/lib/order-manager';
+import { Button } from '@/components/ui/button';
 
 const statusFlow: OrderStatusType[] = ['Preparing', 'Cooking', 'Served'];
 
@@ -16,7 +18,6 @@ function OrderTrackingPageContent({ orderId, tableNumber }: { orderId: string, t
   const firestore = useFirestore();
   const restaurantId = "tablebites-restaurant";
 
-  // Real-time listener for the order document
   const orderRef = useMemoFirebase(() => {
     if (!firestore) return null;
     return doc(firestore, `restaurants/${restaurantId}/orders/${orderId}`);
@@ -24,7 +25,6 @@ function OrderTrackingPageContent({ orderId, tableNumber }: { orderId: string, t
   
   const { data: order, isLoading: isLoadingOrder } = useDoc<Order>(orderRef);
 
-  // Real-time listener for the order items
   const orderItemsRef = useMemoFirebase(() => {
       if (!firestore) return null;
       return collection(firestore, `restaurants/${restaurantId}/orders/${orderId}/orderItems`);
@@ -33,8 +33,15 @@ function OrderTrackingPageContent({ orderId, tableNumber }: { orderId: string, t
   const { data: orderItems, isLoading: isLoadingItems } = useCollection<OrderItem>(orderItemsRef);
 
   const total = orderItems?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
-
   const currentStatus = order?.status || 'Preparing';
+  const isOrderServed = currentStatus === 'Served';
+  const isBillRequested = currentStatus === 'Bill Requested';
+
+  const handleRequestBill = () => {
+    if (firestore && order) {
+      updateOrderStatus(firestore, order.restaurantId, order.id, 'Bill Requested');
+    }
+  };
 
   if (isLoadingOrder) {
     return (
@@ -80,15 +87,24 @@ function OrderTrackingPageContent({ orderId, tableNumber }: { orderId: string, t
               )}
             </div>
           </CardContent>
-           {total > 0 && (
-            <CardFooter className="flex-col items-stretch space-y-2 pt-6">
-                <Separator />
-                <div className="flex justify-between font-bold text-lg">
-                    <span>Total</span>
-                    <span>₹{total.toFixed(2)}</span>
+          <CardFooter className="flex-col items-stretch space-y-4 pt-6">
+              <Separator />
+              <div className="flex justify-between font-bold text-lg">
+                  <span>Total</span>
+                  <span>₹{total.toFixed(2)}</span>
+              </div>
+              {isOrderServed && (
+                <Button onClick={handleRequestBill} size="lg">
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Request Bill
+                </Button>
+              )}
+              {isBillRequested && (
+                <div className="text-center p-2 bg-secondary rounded-md text-secondary-foreground font-semibold">
+                  A member of our staff is on their way with your bill.
                 </div>
-            </CardFooter>
-           )}
+              )}
+          </CardFooter>
         </Card>
       </div>
     </div>

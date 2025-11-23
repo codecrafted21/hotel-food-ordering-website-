@@ -6,11 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, Timestamp } from 'firebase/firestore';
-import type { Order, OrderItem } from '@/lib/types';
+import type { Order, OrderItem, OrderStatus } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { updateOrderStatus } from '@/lib/order-manager';
 import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface LiveOrderCardProps {
   order: Order;
@@ -51,9 +52,20 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
     }
   }, [order.orderDate]);
   
-  const handleStatusChange = (newStatus: "Preparing" | "Cooking" | "Served") => {
+  const handleStatusChange = (newStatus: OrderStatus) => {
       updateOrderStatus(firestore, order.restaurantId, order.id, newStatus);
   }
+
+  const getBadgeVariant = (status: OrderStatus) => {
+    switch (status) {
+      case 'Bill Requested':
+        return 'destructive';
+      case 'Served':
+        return 'secondary';
+      default:
+        return 'default';
+    }
+  };
 
   return (
     <Card className="flex flex-col">
@@ -65,7 +77,7 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
                 Order #{order.id.substring(0, 5)}... &bull; {timeAgo}
                 </CardDescription>
             </div>
-            <Badge variant={order.status === 'Served' ? 'secondary' : 'default'} className="capitalize">{order.status}</Badge>
+            <Badge variant={getBadgeVariant(order.status)} className="capitalize">{order.status}</Badge>
         </div>
       </CardHeader>
       <CardContent className="flex-1">
@@ -98,6 +110,7 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
             <SelectItem value="Preparing">Preparing</SelectItem>
             <SelectItem value="Cooking">Cooking</SelectItem>
             <SelectItem value="Served">Served</SelectItem>
+            <SelectItem value="Bill Requested">Bill Requested</SelectItem>
           </SelectContent>
         </Select>
       </CardFooter>
