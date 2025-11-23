@@ -1,43 +1,89 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { DISHES, CATEGORIES } from '@/lib/data';
+import { CATEGORIES, DISHES as STATIC_DISHES } from '@/lib/data';
 import { DishCard } from '@/components/menu/dish-card';
 import { CategoryCarousel } from '@/components/menu/category-carousel';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useAuth, useUser } from '@/firebase';
+import { useAuth, useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
+import { collection } from 'firebase/firestore';
+import type { Dish } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Helper to create a loading skeleton UI for dish cards
+const MenuLoadingSkeleton = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 mt-10">
+    {Array.from({ length: 4 }).map((_, i) => (
+      <div key={i} className="flex flex-col space-y-3">
+        <Skeleton className="h-[200px] w-full rounded-lg" />
+        <div className="space-y-2">
+          <Skeleton className="h-6 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 
 function MenuContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
   const auth = useAuth();
+  const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
   const [signInAttempted, setSignInAttempted] = useState(false);
 
   const currentCategory = searchParams.get('category') || CATEGORIES[0].id;
   const table = searchParams.get('table');
 
+  // Real-time fetching of dishes from Firestore
+  const dishesRef = useMemoFirebase(() => {
+    if (!firestore) return null;
+    const restaurantId = 'tablebites-restaurant';
+    return collection(firestore, `restaurants/${restaurantId}/dishes`);
+  }, [firestore]);
+
+  const { data: firestoreDishes, isLoading: isLoadingDishes } = useCollection<Dish>(dishesRef);
+
+  // Combine Firestore data with local static data (for imageId mapping)
+  // In a full production app, imageId/URL would be in Firestore too.
+  const allDishes = useMemo(() => {
+    const staticDishMap = new Map(STATIC_DISHES.map(d => [d.name, d]));
+    
+    if (!firestoreDishes) {
+        // Fallback to static dishes if firestore is not ready
+        return STATIC_DISHES;
+    }
+
+    const liveDishes = firestoreDishes.map(dish => {
+        const staticData = staticDishMap.get(dish.name);
+        return {
+            ...dish,
+            // Use existing imageId from static data if available, otherwise a default
+            imageId: staticData?.imageId || 'dish-starter-1', 
+        };
+    });
+
+    // We can merge static and live, but for now let's prioritize live data
+    return liveDishes;
+  }, [firestoreDishes]);
+  
+
   useEffect(() => {
-    // If a table number is in the URL, save it and remove it from the URL
-    // to keep the address bar clean.
     if (table) {
       localStorage.setItem('tableNumber', table);
-      // Use replace to avoid adding to browser history
       router.replace(`/?category=${currentCategory}#menu`);
     } else if (!localStorage.getItem('tableNumber')) {
-      // In a real deployed app you might want a different flow,
-      // but for now we'll just log that no table is set.
       console.log("No table number found in URL or local storage.");
     }
   }, [table, router, currentCategory]);
 
   useEffect(() => {
-    // Automatically sign in the user anonymously if they are not already.
-    // This should only run once.
     if (!isUserLoading && !user && auth && !signInAttempted) {
         initiateAnonymousSignIn(auth);
         setSignInAttempted(true);
@@ -45,7 +91,7 @@ function MenuContent() {
   }, [auth, user, isUserLoading, signInAttempted]);
 
 
-  const filteredDishes = DISHES.filter(
+  const filteredDishes = allDishes.filter(
     (dish) => dish.categoryId === currentCategory
   );
 
@@ -83,7 +129,9 @@ function MenuContent() {
             categories={CATEGORIES}
             currentCategory={currentCategory!}
           />
-          {filteredDishes.length > 0 ? (
+          {isLoadingDishes ? (
+            <MenuLoadingSkeleton />
+          ) : filteredDishes.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 mt-10">
               {filteredDishes.map((dish) => (
                 <DishCard key={dish.id} dish={dish} />
@@ -101,7 +149,7 @@ function MenuContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<MenuLoadingSkeleton />}>
       <MenuContent />
     </Suspense>
   )

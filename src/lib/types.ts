@@ -13,7 +13,8 @@ export type Dish = {
   description: string;
   price: number;
   categoryId: string;
-  imageId: string;
+  imageId?: string; // Made optional as it's for mapping static data
+  imageUrl?: string; // Add this for data coming directly from Firestore form
 };
 
 export type Category = {
