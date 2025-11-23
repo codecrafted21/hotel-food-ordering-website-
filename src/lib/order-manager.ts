@@ -6,9 +6,10 @@ import {
   serverTimestamp,
   writeBatch,
   Firestore,
+  deleteDoc,
 } from 'firebase/firestore';
-import type { CartItem, OrderStatus } from '@/lib/types';
-import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import type { CartItem, OrderStatus, Dish } from '@/lib/types';
+import { updateDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 interface OrderData {
   restaurantId: string;
@@ -71,4 +72,18 @@ export const updateOrderStatus = (firestore: Firestore, restaurantId: string, or
     }
     const orderRef = doc(firestore, `restaurants/${restaurantId}/orders`, orderId);
     updateDocumentNonBlocking(orderRef, { status: status });
+}
+
+// Function to update a dish
+export const updateDish = (firestore: Firestore, dishId: string, values: Partial<Dish>) => {
+    const restaurantId = 'tablebites-restaurant';
+    const dishRef = doc(firestore, `restaurants/${restaurantId}/dishes/${dishId}`);
+    return updateDoc(dishRef, values);
+}
+
+// Function to delete a dish
+export const deleteDish = (firestore: Firestore, dishId: string) => {
+    const restaurantId = 'tablebites-restaurant';
+    const dishRef = doc(firestore, `restaurants/${restaurantId}/dishes/${dishId}`);
+    return deleteDoc(dishRef);
 }
