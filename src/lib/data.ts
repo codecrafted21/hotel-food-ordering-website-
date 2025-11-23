@@ -74,7 +74,7 @@ export const DISHES: Dish[] = [
     price: 320,
     categoryId: 'curries',
     imageId: 'dish-main-3',
-    imageUrl: 'https://images.unsplash.com/photo-1695424683069-b7b282c92b87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxEYWwlMjBNYWtoYW5pfGVufDB8fHx8MTc2NTQyMDYzNXww&ixlib=rb-4.1.0&q=80&w=1080'
+    imageUrl: 'https://images.unsplash.com/photo-1574672282223-f47202362d86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkYWwlMjBtYWtoYW5pfGVufDB8fHx8MTc2NTY4NTU5Nnww&ixlib=rb-4.1.0&q=80&w=1080'
   },
   {
     id: 'dish-14',

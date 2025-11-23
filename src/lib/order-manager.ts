@@ -8,6 +8,7 @@ import {
   Firestore,
   deleteDoc,
   getDocs,
+  query,
 } from 'firebase/firestore';
 import type { CartItem, OrderStatus, Dish } from '@/lib/types';
 import { updateDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -98,31 +99,30 @@ export const seedDatabase = async (firestore: Firestore) => {
   const dishesCollection = collection(firestore, `restaurants/${restaurantId}/dishes`);
   
   try {
-    const snapshot = await getDocs(dishesCollection);
-    if (snapshot.empty) {
-      console.log('Dishes collection is empty. Seeding database with sample dishes...');
-      const batch = writeBatch(firestore);
+    // This is a destructive operation, but necessary to fix the bad data.
+    // First, delete all existing documents in the 'dishes' collection.
+    console.log('Clearing existing dishes from the database...');
+    const existingDishesSnapshot = await getDocs(query(dishesCollection));
+    const deleteBatch = writeBatch(firestore);
+    existingDishesSnapshot.docs.forEach(doc => deleteBatch.delete(doc.ref));
+    await deleteBatch.commit();
+    console.log('Existing dishes cleared. Now seeding fresh data...');
 
-      SEED_DISHES.forEach((dish) => {
-        // We can use the static dish id for the new document id
-        const dishRef = doc(dishesCollection, dish.id);
-        const { imageId, ...dishData } = dish; // imageId is not part of the primary dish data
-        
-        // Find the image URL from placeholder data to store in the document
-        const imageUrl = SEED_DISHES.find(d => d.id === dish.id)?.imageUrl || 'https://placehold.co/600x400';
-
-        batch.set(dishRef, {
-          ...dishData,
-          imageUrl: imageUrl, // Save the image URL directly
-        });
+    // Now, seed the database with the corrected data from data.ts
+    const batch = writeBatch(firestore);
+    SEED_DISHES.forEach((dish) => {
+      const dishRef = doc(dishesCollection, dish.id);
+      const { imageId, ...dishData } = dish;
+      const imageUrl = SEED_DISHES.find(d => d.id === dish.id)?.imageUrl || 'https://placehold.co/600x400';
+      batch.set(dishRef, {
+        ...dishData,
+        imageUrl: imageUrl,
       });
+    });
+    await batch.commit();
+    console.log('Database seeded successfully with corrected data!');
 
-      await batch.commit();
-      console.log('Database seeded successfully!');
-    } else {
-      console.log('Dishes collection already has data. Skipping seed.');
-    }
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error('Error reseeding database:', error);
   }
 };
