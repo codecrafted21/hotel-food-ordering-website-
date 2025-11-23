@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, UserCog } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/components/cart/cart-provider';
@@ -52,6 +52,11 @@ export default function Header() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
+            <Link href="/admin/login">
+               <Button variant="ghost" size="icon" className="rounded-full" aria-label="Admin Login">
+                  <UserCog className="h-5 w-5" />
+                </Button>
+            </Link>
             <Button
               variant="ghost"
               size="icon"
