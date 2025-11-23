@@ -1,16 +1,32 @@
 'use client';
 
-import { useState, useEffect, Suspense, use } from 'react';
+import { useState, useEffect, Suspense, use, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { OrderStatus } from '@/components/order/order-status';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import type { OrderStatus as OrderStatusType } from '@/lib/types';
-import { DISHES } from '@/lib/data';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import type { OrderStatus as OrderStatusType, OrderItem } from '@/lib/types';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import { Loader2 } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 const statusFlow: OrderStatusType[] = ['Preparing', 'Cooking', 'Served'];
 
 function OrderTrackingPageContent({ orderId, tableNumber }: { orderId: string, tableNumber: string | null }) {
   const [currentStatus, setCurrentStatus] = useState<OrderStatusType>(statusFlow[0]);
+  const firestore = useFirestore();
+  const restaurantId = "tablebites-restaurant";
+
+  const orderItemsRef = useMemoFirebase(() => {
+      if (!firestore) return null;
+      return collection(firestore, `restaurants/${restaurantId}/orders/${orderId}/orderItems`);
+  }, [firestore, orderId]);
+
+  const { data: orderItems, isLoading: isLoadingItems } = useCollection<OrderItem>(orderItemsRef);
+
+  const total = useMemo(() => {
+    return orderItems?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
+  }, [orderItems]);
 
   useEffect(() => {
     const timeouts = statusFlow.map((status, index) => {
@@ -29,7 +45,7 @@ function OrderTrackingPageContent({ orderId, tableNumber }: { orderId: string, t
           <CardHeader className="text-center">
             <CardTitle className="font-headline text-3xl">Thank You For Your Order!</CardTitle>
             <CardDescription>
-              Order ID: {orderId} | Table: {tableNumber || 'N/A'}
+              Order ID: #{orderId.substring(0, 7)}... | Table: {tableNumber || 'N/A'}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
@@ -37,27 +53,43 @@ function OrderTrackingPageContent({ orderId, tableNumber }: { orderId: string, t
             <OrderStatus currentStatus={currentStatus} statuses={statusFlow} />
 
             <div className="mt-12 w-full">
-              <h3 className="text-lg font-semibold mb-4 text-center">Your order is in good hands!</h3>
-              <p className="text-center text-muted-foreground">While you wait, why not try one of our popular drinks?</p>
-              <div className="mt-6 flex justify-center gap-4">
-                <div className="text-center p-4 rounded-lg bg-card border w-40">
-                  <p className="font-bold">{DISHES.find(d => d.id === 'dish-11')?.name}</p>
-                  <p className="text-sm text-primary">₹{DISHES.find(d => d.id === 'dish-11')?.price.toFixed(2)}</p>
+              <h3 className="text-lg font-semibold mb-4 text-center">Your Items</h3>
+               {isLoadingItems ? (
+                  <div className="flex justify-center items-center h-24">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+              ) : (
+                <div className="space-y-3 rounded-md border p-4">
+                  {orderItems && orderItems.length > 0 ? (
+                    orderItems.map(item => (
+                      <div key={item.id} className="flex justify-between items-center text-sm">
+                        <p><span className="font-semibold">{item.quantity}x</span> {item.menuItemName}</p>
+                        <p className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground text-center">No items found for this order.</p>
+                  )}
                 </div>
-                 <div className="text-center p-4 rounded-lg bg-card border w-40">
-                  <p className="font-bold">{DISHES.find(d => d.id === 'dish-12')?.name}</p>
-                  <p className="text-sm text-primary">₹{DISHES.find(d => d.id === 'dish-12')?.price.toFixed(2)}</p>
-                </div>
-              </div>
+              )}
             </div>
           </CardContent>
+           {total > 0 && (
+            <CardFooter className="flex-col items-stretch space-y-2 pt-6">
+                <Separator />
+                <div className="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span>₹{total.toFixed(2)}</span>
+                </div>
+            </CardFooter>
+           )}
         </Card>
       </div>
     </div>
   );
 }
 
-function OrderPage({ params }: { params: Promise<{ id: string }> }) {
+function OrderPage({ params }: { params: { id: string } }) {
   const resolvedParams = use(params);
   const searchParams = useSearchParams();
   const tableNumber = searchParams.get('table');
