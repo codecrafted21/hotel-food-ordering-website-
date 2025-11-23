@@ -3,19 +3,14 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if the user has an admin role.
-    // This is a placeholder for a real admin check, which would typically
-    // involve checking a custom claim or a document in an 'admins' collection.
-    // For this app, we will assume an 'admins' collection exists.
+    // Helper function to check if the user is the designated admin.
     function isAdmin() {
-      // In a real app, you'd check custom claims or an admin collection.
-      // For example: return request.auth.token.admin == true;
-      // Or: return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
-      // This is a simplified check for demonstration.
-      return request.auth.uid != null;
+      // This rule grants admin access only to a specific, hardcoded UID.
+      // In a production app, this might be managed via custom claims or an 'admins' collection.
+      return request.auth.uid == 'WUmZIHmue2XXVB38hTCT8hyAWQD3';
     }
 
-    // Public read access for restaurant data, menus, and tables
+    // Public read access for restaurant data, menus, and tables.
     match /restaurants/{restaurantId} {
       allow get: if true;
 
@@ -29,32 +24,29 @@ service cloud.firestore {
       match /tables/{tableId} {
           allow get: if true;
       }
-    }
 
-    // Rules for the orders subcollection, scoped to a specific restaurant
-    match /restaurants/{restaurantId}/orders/{orderId} {
-      // Any authenticated user can create an order for themselves.
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      
-      // Order owner can read their own order.
-      allow get: if request.auth != null && resource.data.userId == request.auth.uid;
-      
-      // Admins can list all orders for their dashboard.
-      allow list: if isAdmin();
-      
-      // Admins can update the status of any order.
-      allow update: if isAdmin();
+      // Rules for the 'orders' subcollection.
+      match /orders/{orderId} {
+        // Any authenticated user can create an order for themselves.
+        // We use request.auth.uid to ensure the order is linked to the user creating it.
+        allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+        
+        // Admins can list all orders for their dashboard.
+        // Customers can only read their own specific order, not list all of them.
+        allow list: if isAdmin();
+        allow get: if (request.auth != null && resource.data.userId == request.auth.uid) || isAdmin();
+        
+        // Admins can update the status of any order.
+        allow update: if isAdmin();
 
-      // Rules for the orderItems sub-subcollection
-      match /orderItems/{orderItemId} {
-          // Allow creation of order items if the user is the owner of the parent order.
-          allow create: if request.auth != null && get(/databases/$(database)/documents/restaurants/$(restaurantId)/orders/$(orderId)).data.userId == request.auth.uid;
-          
-          // Allow reading of order items if the user is the owner of the parent order or an admin.
-          allow read: if request.auth != null && (get(/databases/$(database)/documents/restaurants/$(restaurantId)/orders/$(orderId)).data.userId == request.auth.uid || isAdmin());
-          
-          // Admins can list order items.
-          allow list: if isAdmin();
+        // Rules for the 'orderItems' sub-subcollection.
+        match /orderItems/{orderItemId} {
+            // Allow creation of order items if the user is the owner of the parent order.
+            allow create: if request.auth != null && get(/databases/$(database)/documents/restaurants/$(restaurantId)/orders/$(orderId)).data.userId == request.auth.uid;
+            
+            // Allow reading of order items for the order owner or an admin.
+            allow read: if (request.auth != null && get(/databases/$(database)/documents/restaurants/$(restaurantId)/orders/$(orderId)).data.userId == request.auth.uid) || isAdmin();
+        }
       }
     }
   }
