@@ -1,9 +1,10 @@
-import type { Category, Dish, Order, Table, Waiter } from './types';
+import type { Category, Dish } from './types';
 
 export const CATEGORIES: Category[] = [
   { id: 'starters', name: 'Starters' },
   { id: 'curries', name: 'Curries' },
   { id: 'biryani', name: 'Biryani' },
+  { id: 'breads', name: 'Breads' },
   { id: 'desserts', name: 'Desserts' },
   { id: 'beverages', name: 'Beverages' },
 ];
@@ -34,6 +35,14 @@ export const DISHES: Dish[] = [
     categoryId: 'starters',
     imageId: 'dish-starter-3',
   },
+  {
+    id: 'dish-13',
+    name: 'Hara Bhara Kabab',
+    description: 'A vegetarian kabab made with spinach, peas, and potatoes.',
+    price: 250,
+    categoryId: 'starters',
+    imageId: 'dish-starter-4',
+  },
 
   // Curries
   {
@@ -60,6 +69,14 @@ export const DISHES: Dish[] = [
     categoryId: 'curries',
     imageId: 'dish-main-3',
   },
+  {
+    id: 'dish-14',
+    name: 'Chole Bhature',
+    description: 'Spicy chickpea curry served with fluffy fried bread.',
+    price: 300,
+    categoryId: 'curries',
+    imageId: 'dish-main-4',
+  },
 
   // Biryani
   {
@@ -77,6 +94,40 @@ export const DISHES: Dish[] = [
     price: 350,
     categoryId: 'biryani',
     imageId: 'dish-biryani-2',
+  },
+  {
+    id: 'dish-15',
+    name: 'Mutton Biryani',
+    description: 'Aromatic basmati rice with tender mutton pieces.',
+    price: 550,
+    categoryId: 'biryani',
+    imageId: 'dish-biryani-3',
+  },
+
+  // Breads
+  {
+    id: 'dish-16',
+    name: 'Garlic Naan',
+    description: 'Soft Indian bread with a generous amount of garlic.',
+    price: 90,
+    categoryId: 'breads',
+    imageId: 'dish-breads-1',
+  },
+  {
+    id: 'dish-17',
+    name: 'Tandoori Roti',
+    description: 'Whole wheat bread cooked in a tandoor.',
+    price: 40,
+    categoryId: 'breads',
+    imageId: 'dish-breads-2',
+  },
+  {
+    id: 'dish-18',
+    name: 'Laccha Paratha',
+    description: 'Layered and flaky whole wheat bread.',
+    price: 70,
+    categoryId: 'breads',
+    imageId: 'dish-breads-3',
   },
 
   // Desserts
@@ -96,6 +147,14 @@ export const DISHES: Dish[] = [
     categoryId: 'desserts',
     imageId: 'dish-dessert-2',
   },
+  {
+    id: 'dish-19',
+    name: 'Jalebi',
+    description: 'Crispy, sweet, and chewy spirals soaked in syrup.',
+    price: 130,
+    categoryId: 'desserts',
+    imageId: 'dish-dessert-3',
+  },
 
   // Beverages
   {
@@ -114,52 +173,12 @@ export const DISHES: Dish[] = [
     categoryId: 'beverages',
     imageId: 'dish-drink-2',
   },
+  {
+    id: 'dish-20',
+    name: 'Nimbu Pani',
+    description: 'Fresh and tangy Indian-style lemonade.',
+    price: 100,
+    categoryId: 'beverages',
+    imageId: 'dish-drink-3',
+  },
 ];
-
-export const MOCK_ORDERS: Order[] = [
-    {
-        id: 'ORD-1',
-        tableNumber: 5,
-        items: [
-            { id: 'cart-1', dish: DISHES[0], quantity: 2 }, // Paneer Tikka
-            { id: 'cart-2', dish: DISHES[3], quantity: 1 }, // Butter Chicken
-        ],
-        total: (DISHES[0].price * 2) + DISHES[3].price,
-        status: 'Preparing',
-        createdAt: new Date(Date.now() - 5 * 60 * 1000) // 5 minutes ago
-    },
-    {
-        id: 'ORD-2',
-        tableNumber: 12,
-        items: [
-            { id: 'cart-3', dish: DISHES[6], quantity: 1 }, // Hyderabadi Chicken Biryani
-            { id: 'cart-4', dish: DISHES[7], quantity: 1 }, // Vegetable Biryani
-            { id: 'cart-5', dish: DISHES[9], quantity: 2 }, // Rasmalai
-        ],
-        total: DISHES[6].price + DISHES[7].price + (DISHES[9].price * 2),
-        status: 'Cooking',
-        createdAt: new Date(Date.now() - 2 * 60 * 1000) // 2 minutes ago
-    },
-    {
-        id: 'ORD-3',
-        tableNumber: 8,
-        items: [
-            { id: 'cart-6', dish: DISHES[4], quantity: 1 }, // Palak Paneer
-        ],
-        total: DISHES[4].price,
-        status: 'Preparing',
-        createdAt: new Date(Date.now() - 1 * 60 * 1000) // 1 minute ago
-    }
-]
-
-export const WAITERS: Waiter[] = [
-  { id: 'waiter-1', name: 'Ravi', avatarUrl: 'https://i.pravatar.cc/150?u=ravi' },
-  { id: 'waiter-2', name: 'Priya', avatarUrl: 'https://i.pravatar.cc/150?u=priya' },
-  { id: 'waiter-3', name: 'Sanjay', avatarUrl: 'https://i.pravatar.cc/150?u=sanjay' },
-  { id: 'waiter-4', name: 'Anjali', avatarUrl: 'https://i.pravatar.cc/150?u=anjali' },
-];
-
-export const TABLES: Table[] = Array.from({ length: 16 }, (_, i) => ({
-  id: i + 1,
-  waiterId: WAITERS[i % WAITERS.length].id,
-}));

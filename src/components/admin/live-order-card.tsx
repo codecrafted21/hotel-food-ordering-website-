@@ -11,7 +11,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { updateOrderStatus } from '@/lib/order-manager';
 import { Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface LiveOrderCardProps {
   order: Order;
@@ -53,7 +52,9 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
   }, [order.orderDate]);
   
   const handleStatusChange = (newStatus: OrderStatus) => {
-      updateOrderStatus(firestore, order.restaurantId, order.id, newStatus);
+      if(firestore) {
+        updateOrderStatus(firestore, order.restaurantId, order.id, newStatus);
+      }
   }
 
   const getBadgeVariant = (status: OrderStatus) => {

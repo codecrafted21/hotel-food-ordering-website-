@@ -25,6 +25,12 @@
       "imageHint": "aloo tikki"
     },
     {
+      "id": "dish-starter-4",
+      "description": "Hara Bhara Kabab patties.",
+      "imageUrl": "https://images.unsplash.com/photo-1599232288126-7dbd2127db14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxoYXJhJTIwYmhhcmElMjBrYWJhYnxlbnwwfHx8fDE3NjM5MDM2ODN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hara bhara kabab"
+    },
+    {
       "id": "dish-main-1",
       "description": "Creamy butter chicken curry in a bowl.",
       "imageUrl": "https://images.unsplash.com/photo-1588166524941-3bf6a85e4e4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxidXR0ZXIlMjBjaGlja2VufGVufDB8fHx8MTc2NTQyMDU3Mnww&ixlib=rb-4.1.0&q=80&w=1080",
@@ -43,6 +49,12 @@
       "imageHint": "dal makhani"
     },
     {
+      "id": "dish-main-4",
+      "description": "Chole Bhature with onions.",
+      "imageUrl": "https://images.unsplash.com/photo-1644780398576-b73bfb3adc56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjaG9sZSUyMGJoYXR1cmV8ZW58MHx8fHwxNzYzODc1MzI5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chole bhature"
+    },
+    {
       "id": "dish-biryani-1",
       "description": "Aromatic Hyderabadi Chicken Biryani.",
       "imageUrl": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjaGlja2VuJTIwYmlyeWFuaXxlbnwwfHx8fDE3NjM0ODQ4NjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -53,6 +65,30 @@
       "description": "Flavorful Vegetable Biryani in a pot.",
       "imageUrl": "https://images.unsplash.com/photo-1589301760014-d929f397918b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx2ZWdldGFibGUlMjBiaXJ5YW5pfGVufDB8fHx8MTc2NTQyMDcwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "vegetable biryani"
+    },
+    {
+      "id": "dish-biryani-3",
+      "description": "Mouth-watering Mutton Biryani.",
+      "imageUrl": "https://images.unsplash.com/photo-1691171047312-d809eccef46d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtdXR0b24lMjBiaXJ5YW5pfGVufDB8fHx8MTc2Mzg4Mzk2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mutton biryani"
+    },
+    {
+      "id": "dish-breads-1",
+      "description": "Hot Garlic Naan.",
+      "imageUrl": "https://images.unsplash.com/photo-1725483990094-e95226a16db7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxnYXJsaWMlMjBuYWFufGVufDB8fHx8MTc2MzgyMDM3MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "garlic naan"
+    },
+    {
+      "id": "dish-breads-2",
+      "description": "Tandoori Roti on a plate.",
+      "imageUrl": "https://images.unsplash.com/photo-1733210438330-95dadd453e9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx0YW5kb29yaSUyMHJvdGl8ZW58MHx8fHwxNzYzOTAzNjgzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tandoori roti"
+    },
+    {
+      "id": "dish-breads-3",
+      "description": "Laccha Paratha stack.",
+      "imageUrl": "https://picsum.photos/seed/46/600/400",
+      "imageHint": "laccha paratha"
     },
     {
       "id": "dish-drink-1",
@@ -67,6 +103,12 @@
       "imageHint": "mango lassi"
     },
     {
+      "id": "dish-drink-3",
+      "description": "Refreshing Nimbu Pani.",
+      "imageUrl": "https://picsum.photos/seed/47/600/400",
+      "imageHint": "nimbu pani"
+    },
+    {
       "id": "dish-dessert-1",
       "description": "Sweet Gulab Jamun balls in a bowl.",
       "imageUrl": "https://images.unsplash.com/photo-1670984577883-925eb396a84c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxndWxhYiUyMGphbXVufGVufDB8fHx8MTc2NTQyMDgwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
@@ -77,6 +119,12 @@
       "description": "Creamy Rasmalai dessert.",
       "imageUrl": "https://images.unsplash.com/photo-1603753892186-63f45c82c16f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyYXNtYWxhaXxlbnwwfHx8fDE3NjU0MjA4NDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "rasmalai"
+    },
+    {
+      "id": "dish-dessert-3",
+      "description": "Hot and crispy Jalebi.",
+      "imageUrl": "https://images.unsplash.com/photo-1624196638923-ec5915c1f5f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxqYWxlYml8ZW58MHx8fHwxNzYzODkxNjYwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "jalebi"
     },
     {
       "id": "about-us",
