@@ -1,22 +1,30 @@
 'use client';
 
-import { useState, useEffect, Suspense, use, useMemo } from 'react';
+import { useState, useEffect, Suspense, use } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { OrderStatus } from '@/components/order/order-status';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import type { OrderStatus as OrderStatusType, OrderItem } from '@/lib/types';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import type { OrderStatus as OrderStatusType, OrderItem, Order } from '@/lib/types';
+import { useCollection, useFirestore, useMemoFirebase, useDoc } from '@/firebase';
+import { collection, doc } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const statusFlow: OrderStatusType[] = ['Preparing', 'Cooking', 'Served'];
 
 function OrderTrackingPageContent({ orderId, tableNumber }: { orderId: string, tableNumber: string | null }) {
-  const [currentStatus, setCurrentStatus] = useState<OrderStatusType>(statusFlow[0]);
   const firestore = useFirestore();
   const restaurantId = "tablebites-restaurant";
 
+  // Real-time listener for the order document
+  const orderRef = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return doc(firestore, `restaurants/${restaurantId}/orders/${orderId}`);
+  }, [firestore, orderId]);
+  
+  const { data: order, isLoading: isLoadingOrder } = useDoc<Order>(orderRef);
+
+  // Real-time listener for the order items
   const orderItemsRef = useMemoFirebase(() => {
       if (!firestore) return null;
       return collection(firestore, `restaurants/${restaurantId}/orders/${orderId}/orderItems`);
@@ -24,19 +32,17 @@ function OrderTrackingPageContent({ orderId, tableNumber }: { orderId: string, t
 
   const { data: orderItems, isLoading: isLoadingItems } = useCollection<OrderItem>(orderItemsRef);
 
-  const total = useMemo(() => {
-    return orderItems?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
-  }, [orderItems]);
+  const total = orderItems?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
 
-  useEffect(() => {
-    const timeouts = statusFlow.map((status, index) => {
-      return setTimeout(() => {
-        setCurrentStatus(status);
-      }, (index) * 7000); // Progress every 7 seconds
-    });
+  const currentStatus = order?.status || 'Preparing';
 
-    return () => timeouts.forEach(clearTimeout);
-  }, []);
+  if (isLoadingOrder) {
+    return (
+        <div className="flex justify-center items-center min-h-[50vh]">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-20">
