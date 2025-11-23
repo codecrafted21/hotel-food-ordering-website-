@@ -87,7 +87,7 @@
     {
       "id": "dish-breads-3",
       "description": "Laccha Paratha stack.",
-      "imageUrl": "https://picsum.photos/seed/46/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1629828820438-04f710955b25?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsYWNjaGElMjBwYXJhdGhhfGVufDB8fHx8MTc2NTU5NTE5OXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "laccha paratha"
     },
     {
@@ -105,7 +105,7 @@
     {
       "id": "dish-drink-3",
       "description": "Refreshing Nimbu Pani.",
-      "imageUrl": "https://picsum.photos/seed/47/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1616884323223-265c7c00c05f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuaW1idSUyMHBhbml8ZW58MHx8fHwxNzY1NTk1MjIxfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "nimbu pani"
     },
     {
