@@ -6,7 +6,6 @@ service cloud.firestore {
     // Helper function to check if the user is the designated admin.
     function isAdmin() {
       // This rule grants admin access only to a specific, hardcoded UID.
-      // In a production app, this might be managed via custom claims or an 'admins' collection.
       return request.auth.uid == 'WUmZIHmue2XXVB38hTCT8hyAWQD3';
     }
 
@@ -14,15 +13,21 @@ service cloud.firestore {
     match /restaurants/{restaurantId} {
       allow get: if true;
 
+      // Allow admin to write to restaurant data, menus, and tables
+      allow write: if isAdmin();
+
       match /menuCategories/{menuCategoryId} {
         allow get: if true;
+        allow write: if isAdmin();
         match /menuItems/{menuItemId} {
             allow get: if true;
+            allow write: if isAdmin();
         }
       }
       
       match /tables/{tableId} {
           allow get: if true;
+          allow write: if isAdmin();
       }
 
       // Rules for the 'orders' subcollection.

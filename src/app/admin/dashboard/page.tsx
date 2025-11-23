@@ -10,6 +10,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import { LiveOrderCard } from '@/components/admin/live-order-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QrCodeManager } from '@/components/admin/qr-code-manager';
+import { MenuManager } from '@/components/admin/menu-manager';
 
 export default function AdminDashboard() {
   const { user, isUserLoading } = useUser();
@@ -70,8 +71,9 @@ export default function AdminDashboard() {
       </header>
 
       <Tabs defaultValue="orders">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="orders">Live Orders</TabsTrigger>
+          <TabsTrigger value="menu">Menu</TabsTrigger>
           <TabsTrigger value="tables">Table QR Codes</TabsTrigger>
         </TabsList>
         <TabsContent value="orders">
@@ -90,6 +92,9 @@ export default function AdminDashboard() {
               </div>
             )}
           </div>
+        </TabsContent>
+        <TabsContent value="menu">
+            <MenuManager />
         </TabsContent>
         <TabsContent value="tables">
             <QrCodeManager />
