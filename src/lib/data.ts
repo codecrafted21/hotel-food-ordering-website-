@@ -46,12 +46,12 @@ export const DISHES: Dish[] = [
 
   // Curries
   {
-    id: 'dish-4',
-    name: 'Butter Chicken',
-    description: 'Grilled chicken in a rich, creamy tomato and butter sauce.',
-    price: 450,
+    id: 'dish-21',
+    name: 'Paneer Butter Masala',
+    description: 'Cubes of paneer in a rich, creamy tomato and butter sauce.',
+    price: 420,
     categoryId: 'curries',
-    imageId: 'dish-main-1',
+    imageId: 'dish-main-5',
   },
   {
     id: 'dish-5',
@@ -77,16 +77,16 @@ export const DISHES: Dish[] = [
     categoryId: 'curries',
     imageId: 'dish-main-4',
   },
+  {
+    id: 'dish-22',
+    name: 'Malai Kofta',
+    description: 'Fried potato and paneer balls in a rich, creamy tomato gravy.',
+    price: 400,
+    categoryId: 'curries',
+    imageId: 'dish-main-6',
+  },
 
   // Biryani
-  {
-    id: 'dish-7',
-    name: 'Hyderabadi Chicken Biryani',
-    description: 'Aromatic basmati rice with succulent chicken and spices.',
-    price: 480,
-    categoryId: 'biryani',
-    imageId: 'dish-biryani-1',
-  },
   {
     id: 'dish-8',
     name: 'Vegetable Biryani',
@@ -96,12 +96,12 @@ export const DISHES: Dish[] = [
     imageId: 'dish-biryani-2',
   },
   {
-    id: 'dish-15',
-    name: 'Mutton Biryani',
-    description: 'Aromatic basmati rice with tender mutton pieces.',
-    price: 550,
+    id: 'dish-23',
+    name: 'Mushroom Biryani',
+    description: 'Aromatic basmati rice cooked with mushrooms and spices.',
+    price: 380,
     categoryId: 'biryani',
-    imageId: 'dish-biryani-3',
+    imageId: 'dish-biryani-4',
   },
 
   // Breads

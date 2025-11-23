@@ -9,7 +9,7 @@
     {
       "id": "dish-starter-1",
       "description": "Grilled Paneer Tikka skewers.",
-      "imageUrl": "https://images.unsplash.com/photo-1626081739588-75c6c683c34a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNzI2MDR8MHwxfHNlYXJjaHw3fHxwYW5lZXIlMjB0aWtrYSUyMHNrZXdlcnN8ZW58MHx8fHwxNjU4ODg0NDY5&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1567188040759-fb8a873dc6d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYW5lZXIlMjB0aWtrYXxlbnwwfHx8fDE3NjM4MjAyMDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "paneer tikka"
     },
     {
@@ -31,10 +31,10 @@
       "imageHint": "hara bhara kabab"
     },
     {
-      "id": "dish-main-1",
-      "description": "Creamy butter chicken curry in a bowl.",
-      "imageUrl": "https://images.unsplash.com/photo-1588166524941-3bf6a85e4e4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxidXR0ZXIlMjBjaGlja2VufGVufDB8fHx8MTc2NTQyMDU3Mnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "butter chicken"
+      "id": "dish-main-5",
+      "description": "Creamy Paneer Butter Masala in a bowl.",
+      "imageUrl": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwYW5lZXIlMjBidXR0ZXIlMjBtYXNhbGF8ZW58MHx8fHwxNzY1NDI0NjU0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "paneer butter masala"
     },
     {
       "id": "dish-main-2",
@@ -55,10 +55,10 @@
       "imageHint": "chole bhature"
     },
     {
-      "id": "dish-biryani-1",
-      "description": "Aromatic Hyderabadi Chicken Biryani.",
-      "imageUrl": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjaGlja2VuJTIwYmlyeWFuaXxlbnwwfHx8fDE3NjM0ODQ4NjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "chicken biryani"
+      "id": "dish-main-6",
+      "description": "Malai Kofta in a creamy sauce.",
+      "imageUrl": "https://images.unsplash.com/photo-1626081739588-75c6c683c34a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYWxhaSUyMGtvZnRhfGVufDB8fHx8MTc2NTQyNDY5MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "malai kofta"
     },
     {
       "id": "dish-biryani-2",
@@ -67,10 +67,10 @@
       "imageHint": "vegetable biryani"
     },
     {
-      "id": "dish-biryani-3",
-      "description": "Mouth-watering Mutton Biryani.",
-      "imageUrl": "https://images.unsplash.com/photo-1691171047312-d809eccef46d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtdXR0b24lMjBiaXJ5YW5pfGVufDB8fHx8MTc2Mzg4Mzk2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "mutton biryani"
+      "id": "dish-biryani-4",
+      "description": "Aromatic Mushroom Biryani.",
+      "imageUrl": "https://images.unsplash.com/photo-1599540058882-626a57c91cbb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtdXNocm9vbSUyMGJpcnlhbml8ZW58MHx8fHwxNzY1NDI0NzI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mushroom biryani"
     },
     {
       "id": "dish-breads-1",
@@ -129,7 +129,7 @@
     {
       "id": "about-us",
       "description": "Interior of a modern, elegant restaurant.",
-      "imageUrl": "https://images.unsplash.com/photo-1538334421852-687c439c92f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cmVzdGF1cmFudCUyMGludGVyaW9yfGVufDB8fHx8MTc2MzM5OTg2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1538334421852-687c439c92f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cmVzdGF1cmFudCUyMGludGVyaW9yfGVufDB8fHx8MTc2MzM5OTg2MXww&ixlibrb-4.1.0&q=80&w=1080",
       "imageHint": "restaurant interior"
     },
     {
