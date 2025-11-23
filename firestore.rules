@@ -30,6 +30,10 @@ service cloud.firestore {
           allow write: if isAdmin();
       }
 
+      match /dishes/{dishId} {
+        allow read, write: if isAdmin();
+      }
+
       // Rules for the 'orders' subcollection.
       match /orders/{orderId} {
         // Any authenticated user can create an order for themselves.
