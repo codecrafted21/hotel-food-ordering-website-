@@ -14,7 +14,6 @@ type DishCardProps = {
 };
 
 export function DishCard({ dish }: DishCardProps) {
-  // Find the image using the imageId which we mapped from static data
   const dishImage = PlaceHolderImages.find((img) => img.id === dish.imageId);
   const { dispatch } = useCart();
   const { toast } = useToast();
@@ -32,9 +31,9 @@ export function DishCard({ dish }: DishCardProps) {
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out hover:shadow-primary/20 hover:shadow-lg hover:-translate-y-1">
       <CardHeader className="p-0">
         <div className="relative aspect-video">
-          {dishImage || dish.imageUrl ? (
+          {dish.imageUrl ? (
             <Image
-              src={dishImage?.imageUrl || dish.imageUrl!} // Fallback to imageUrl directly from firestore
+              src={dish.imageUrl}
               alt={dish.name}
               fill
               className="object-cover"

@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { CATEGORIES, DISHES as STATIC_DISHES } from '@/lib/data';
+import { CATEGORIES } from '@/lib/data';
 import { DishCard } from '@/components/menu/dish-card';
 import { CategoryCarousel } from '@/components/menu/category-carousel';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -12,11 +12,12 @@ import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 import { collection } from 'firebase/firestore';
 import type { Dish } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { seedDatabase } from '@/lib/order-manager';
 
 // Helper to create a loading skeleton UI for dish cards
 const MenuLoadingSkeleton = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 mt-10">
-    {Array.from({ length: 4 }).map((_, i) => (
+    {Array.from({ length: 8 }).map((_, i) => (
       <div key={i} className="flex flex-col space-y-3">
         <Skeleton className="h-[200px] w-full rounded-lg" />
         <div className="space-y-2">
@@ -37,9 +38,20 @@ function MenuContent() {
   const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
   const [signInAttempted, setSignInAttempted] = useState(false);
+  const [dbSeeded, setDbSeeded] = useState(false);
+
 
   const currentCategory = searchParams.get('category') || CATEGORIES[0].id;
   const table = searchParams.get('table');
+  
+  // Seed the database once if firestore is available
+  useEffect(() => {
+    if (firestore && !dbSeeded) {
+      seedDatabase(firestore);
+      setDbSeeded(true); // Ensure it only runs once
+    }
+  }, [firestore, dbSeeded]);
+
 
   // Real-time fetching of dishes from Firestore
   const dishesRef = useMemoFirebase(() => {
@@ -48,32 +60,8 @@ function MenuContent() {
     return collection(firestore, `restaurants/${restaurantId}/dishes`);
   }, [firestore]);
 
-  const { data: firestoreDishes, isLoading: isLoadingDishes } = useCollection<Dish>(dishesRef);
-
-  // Combine Firestore data with local static data (for imageId mapping)
-  // In a full production app, imageId/URL would be in Firestore too.
-  const allDishes = useMemo(() => {
-    const staticDishMap = new Map(STATIC_DISHES.map(d => [d.name, d]));
-    
-    if (!firestoreDishes) {
-        // Fallback to static dishes if firestore is not ready
-        return STATIC_DISHES;
-    }
-
-    const liveDishes = firestoreDishes.map(dish => {
-        const staticData = staticDishMap.get(dish.name);
-        return {
-            ...dish,
-            // Use existing imageId from static data if available, otherwise a default
-            imageId: staticData?.imageId || 'dish-starter-1', 
-        };
-    });
-
-    // We can merge static and live, but for now let's prioritize live data
-    return liveDishes;
-  }, [firestoreDishes]);
+  const { data: allDishes, isLoading: isLoadingDishes } = useCollection<Dish>(dishesRef);
   
-
   useEffect(() => {
     if (table) {
       localStorage.setItem('tableNumber', table);
@@ -91,9 +79,13 @@ function MenuContent() {
   }, [auth, user, isUserLoading, signInAttempted]);
 
 
-  const filteredDishes = allDishes.filter(
-    (dish) => dish.categoryId === currentCategory
-  );
+  const filteredDishes = useMemo(() => {
+    if (!allDishes) return [];
+    return allDishes.filter(
+      (dish) => dish.categoryId === currentCategory
+    );
+  }, [allDishes, currentCategory]);
+  
 
   return (
     <div className="w-full">

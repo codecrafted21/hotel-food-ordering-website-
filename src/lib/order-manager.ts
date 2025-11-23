@@ -7,9 +7,11 @@ import {
   writeBatch,
   Firestore,
   deleteDoc,
+  getDocs,
 } from 'firebase/firestore';
 import type { CartItem, OrderStatus, Dish } from '@/lib/types';
 import { updateDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { DISHES as SEED_DISHES } from '@/lib/data';
 
 interface OrderData {
   restaurantId: string;
@@ -87,3 +89,40 @@ export const deleteDish = (firestore: Firestore, dishId: string) => {
     const dishRef = doc(firestore, `restaurants/${restaurantId}/dishes/${dishId}`);
     return deleteDoc(dishRef);
 }
+
+
+// --- ONE-TIME DATABASE SEEDING ---
+// This function will populate the menu with sample dishes if the collection is empty.
+export const seedDatabase = async (firestore: Firestore) => {
+  const restaurantId = 'tablebites-restaurant';
+  const dishesCollection = collection(firestore, `restaurants/${restaurantId}/dishes`);
+  
+  try {
+    const snapshot = await getDocs(dishesCollection);
+    if (snapshot.empty) {
+      console.log('Dishes collection is empty. Seeding database with sample dishes...');
+      const batch = writeBatch(firestore);
+
+      SEED_DISHES.forEach((dish) => {
+        // We can use the static dish id for the new document id
+        const dishRef = doc(dishesCollection, dish.id);
+        const { imageId, ...dishData } = dish; // imageId is not part of the primary dish data
+        
+        // Find the image URL from placeholder data to store in the document
+        const imageUrl = SEED_DISHES.find(d => d.id === dish.id)?.imageUrl || 'https://placehold.co/600x400';
+
+        batch.set(dishRef, {
+          ...dishData,
+          imageUrl: imageUrl, // Save the image URL directly
+        });
+      });
+
+      await batch.commit();
+      console.log('Database seeded successfully!');
+    } else {
+      console.log('Dishes collection already has data. Skipping seed.');
+    }
+  } catch (error) {
+    console.error('Error seeding database:', error);
+  }
+};
