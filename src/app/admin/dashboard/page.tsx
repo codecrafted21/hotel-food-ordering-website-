@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { useUser, useFirestore } from '@/firebase';
+import { collection, query, orderBy, onSnapshot, type Order as FirestoreOrder } from 'firebase/firestore';
 import { Loader2, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getAuth, signOut } from 'firebase/auth';
@@ -15,16 +15,30 @@ export default function AdminDashboard() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const firestore = useFirestore();
+  const [orders, setOrders] = useState<FirestoreOrder[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(true);
 
-  // Memoize the query to prevent re-renders
-  const ordersQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    // In a real app, restaurantId would be dynamic
+  useEffect(() => {
+    if (!firestore || !user) return;
+
     const restaurantId = "tablebites-restaurant";
-    return query(collection(firestore, `restaurants/${restaurantId}/orders`), orderBy('orderDate', 'desc'));
-  }, [firestore]);
-  
-  const { data: orders, isLoading: isLoadingOrders, error: ordersError } = useCollection(ordersQuery);
+    const ordersQuery = query(collection(firestore, `restaurants/${restaurantId}/orders`), orderBy('orderDate', 'desc'));
+
+    const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+      const fetchedOrders = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as FirestoreOrder[];
+      setOrders(fetchedOrders);
+      setIsLoadingOrders(false);
+    }, (error) => {
+      console.error("Error fetching orders: ", error);
+      setIsLoadingOrders(false);
+    });
+
+    return () => unsubscribe();
+  }, [firestore, user]);
+
 
   const handleLogout = async () => {
     const auth = getAuth();
@@ -43,11 +57,6 @@ export default function AdminDashboard() {
   if (!user) {
     router.replace('/admin/login');
     return null;
-  }
-  
-  if (ordersError) {
-      // This will be caught by the error boundary
-      throw ordersError;
   }
 
   return (
