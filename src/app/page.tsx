@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { DISHES, CATEGORIES } from '@/lib/data';
@@ -16,6 +16,7 @@ function MenuContent() {
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
+  const [signInAttempted, setSignInAttempted] = useState(false);
 
   const currentCategory = searchParams.get('category') || CATEGORIES[0].id;
   const table = searchParams.get('table');
@@ -36,10 +37,12 @@ function MenuContent() {
 
   useEffect(() => {
     // Automatically sign in the user anonymously if they are not already.
-    if (!isUserLoading && !user && auth) {
+    // This should only run once.
+    if (!isUserLoading && !user && auth && !signInAttempted) {
         initiateAnonymousSignIn(auth);
+        setSignInAttempted(true);
     }
-  }, [auth, user, isUserLoading]);
+  }, [auth, user, isUserLoading, signInAttempted]);
 
 
   const filteredDishes = DISHES.filter(
