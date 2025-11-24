@@ -36,9 +36,8 @@ service cloud.firestore {
 
       // Rules for the 'orders' subcollection.
       match /orders/{orderId} {
-        // Any authenticated user can create an order for themselves.
-        // We use request.auth.uid to ensure the order is linked to the user creating it.
-        allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+        // Any authenticated user (including anonymous) can create an order.
+        allow create: if request.auth != null;
         
         // Admins can list all orders for their dashboard.
         // Customers can only read their own specific order, not list all of them.
@@ -51,6 +50,7 @@ service cloud.firestore {
         // Rules for the 'orderItems' sub-subcollection.
         match /orderItems/{orderItemId} {
             // Allow creation of order items if the user is the owner of the parent order.
+            // This now allows anonymous users who created the order to add items.
             allow create: if request.auth != null && get(/databases/$(database)/documents/restaurants/$(restaurantId)/orders/$(orderId)).data.userId == request.auth.uid;
             
             // Allow reading of order items for the order owner or an admin.
