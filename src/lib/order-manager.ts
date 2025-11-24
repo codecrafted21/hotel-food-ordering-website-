@@ -1,3 +1,4 @@
+
 import {
   collection,
   addDoc,
@@ -9,6 +10,7 @@ import {
   deleteDoc,
   getDocs,
   query,
+  limit,
 } from 'firebase/firestore';
 import type { CartItem, OrderStatus, Dish } from '@/lib/types';
 import { updateDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -99,6 +101,14 @@ export const seedDatabase = async (firestore: Firestore) => {
   const dishesCollection = collection(firestore, `restaurants/${restaurantId}/dishes`);
   
   try {
+    // Check if dishes already exist to prevent re-seeding
+    const checkForDishes = query(dishesCollection, limit(1));
+    const snapshot = await getDocs(checkForDishes);
+    if (!snapshot.empty) {
+      console.log('Database already seeded.');
+      return;
+    }
+
     // This is a destructive operation, but necessary to fix the bad data.
     // First, delete all existing documents in the 'dishes' collection.
     console.log('Clearing existing dishes from the database...');
