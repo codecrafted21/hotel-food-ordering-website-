@@ -31,7 +31,9 @@ service cloud.firestore {
       }
 
       match /dishes/{dishId} {
-        allow read, write: if isAdmin();
+        // Allow anyone to read the dishes (the menu), but only admin to write.
+        allow read: if true;
+        allow write: if isAdmin();
       }
 
       // Rules for the 'orders' subcollection.
