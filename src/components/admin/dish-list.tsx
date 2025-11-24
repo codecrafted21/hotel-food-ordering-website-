@@ -64,6 +64,7 @@ export function DishList({ dishes }: DishListProps) {
           <div className="flex-1">
             <h4 className="font-semibold">{dish.name}</h4>
             <p className="text-sm text-muted-foreground">₹{dish.price.toFixed(2)}</p>
+
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" onClick={() => setDishToEdit(dish)}>

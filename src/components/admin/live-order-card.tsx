@@ -91,7 +91,9 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
             {items?.map(item => (
               <div key={item.id} className="flex justify-between text-sm">
                 <p><span className="font-semibold">{item.quantity}x</span> {item.menuItemName}</p>
-                <p>₹{(item.price * item.quantity).toFixed(2)}</p>
+                <p>₹{(Number(item.price) * Number(item.quantity)).toFixed(2)}</p>
+
+
               </div>
             ))}
           </div>

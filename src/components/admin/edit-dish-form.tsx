@@ -126,6 +126,7 @@ export function EditDishForm({ dish, isOpen, onOpenChange }: EditDishFormProps) 
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Price (₹)</FormLabel>
+
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
