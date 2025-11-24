@@ -20,6 +20,17 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
   const firestore = useFirestore();
   const [timeAgo, setTimeAgo] = useState('');
 
+  // Helper: format INR using Intl.NumberFormat (reliable and shows ₹)
+  const formatINR = (value: number) => {
+    // guard against NaN / undefined
+    const num = Number(value) || 0;
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 2,
+    }).format(num);
+  };
+
   // Memoize the collection reference
   const orderItemsRef = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -29,7 +40,7 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
   const { data: items, isLoading: isLoadingItems } = useCollection<OrderItem>(orderItemsRef);
 
   const total = useMemo(() => {
-    return items?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
+    return items?.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0) || 0;
   }, [items]);
 
   useEffect(() => {
@@ -38,24 +49,24 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
       const date = order.orderDate instanceof Timestamp
         ? order.orderDate.toDate()
         : new Date(order.orderDate);
-        
+
       if (!isNaN(date.getTime())) {
         setTimeAgo(formatDistanceToNow(date, { addSuffix: true }));
 
         const interval = setInterval(() => {
-            setTimeAgo(formatDistanceToNow(date, { addSuffix: true }));
+          setTimeAgo(formatDistanceToNow(date, { addSuffix: true }));
         }, 60000); // Update every minute
 
         return () => clearInterval(interval);
       }
     }
   }, [order.orderDate]);
-  
+
   const handleStatusChange = (newStatus: OrderStatus) => {
-      if(firestore) {
-        updateOrderStatus(firestore, order.restaurantId, order.id, newStatus);
-      }
-  }
+    if (firestore) {
+      updateOrderStatus(firestore, order.restaurantId, order.id, newStatus);
+    }
+  };
 
   const getBadgeVariant = (status: OrderStatus) => {
     switch (status) {
@@ -72,13 +83,13 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
     <Card className="flex flex-col">
       <CardHeader>
         <div className="flex justify-between items-start">
-            <div>
-                <CardTitle className="font-headline">Table {order.tableNumber}</CardTitle>
-                <CardDescription>
-                Order #{order.id.substring(0, 5)}... &bull; {timeAgo}
-                </CardDescription>
-            </div>
-            <Badge variant={getBadgeVariant(order.status)} className="capitalize">{order.status}</Badge>
+          <div>
+            <CardTitle className="font-headline">Table {order.tableNumber}</CardTitle>
+            <CardDescription>
+              Order #{order.id.substring(0, 5)}... &bull; {timeAgo}
+            </CardDescription>
+          </div>
+          <Badge variant={getBadgeVariant(order.status)} className="capitalize">{order.status}</Badge>
         </div>
       </CardHeader>
       <CardContent className="flex-1">
@@ -88,22 +99,23 @@ export function LiveOrderCard({ order }: LiveOrderCardProps) {
           </div>
         ) : (
           <div className="space-y-3">
-            {items?.map(item => (
-              <div key={item.id} className="flex justify-between text-sm">
-                <p><span className="font-semibold">{item.quantity}x</span> {item.menuItemName}</p>
-                <p>₹{(Number(item.price) * Number(item.quantity)).toFixed(2)}</p>
-
-
-              </div>
-            ))}
+            {items?.map(item => {
+              const lineTotal = Number(item.price) * Number(item.quantity);
+              return (
+                <div key={item.id} className="flex justify-between text-sm">
+                  <p><span className="font-semibold">{item.quantity}x</span> {item.menuItemName}</p>
+                  <p>{formatINR(lineTotal)}</p>
+                </div>
+              );
+            })}
           </div>
         )}
       </CardContent>
       <CardFooter className="flex-col items-stretch space-y-4">
         <Separator />
-         <div className="flex justify-between font-bold">
-            <span>Total</span>
-            <span>₹{total.toFixed(2)}</span>
+        <div className="flex justify-between font-bold">
+          <span>Total</span>
+          <span>{formatINR(total)}</span>
         </div>
         <Select defaultValue={order.status} onValueChange={handleStatusChange}>
           <SelectTrigger>
